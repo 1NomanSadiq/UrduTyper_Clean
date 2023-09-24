@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/splash_nav_graph"
+    app:startDestination="@id/splash_fragment">
+
+    <fragment
+        android:id="@+id/splash_fragment"
+        android:name="me.nomi.urdutyper.ui.splash.SplashScreenFragment"
+        android:label="Splash"
+        tools:layout="@layout/fragment_splash_screen">
+
+        <action
+            android:id="@+id/to_mainActivity"
+            app:destination="@id/main_activity" />
+
+        <action
+            android:id="@+id/to_dashboard"
+            app:destination="@id/dashboard_activity" />
+
+    </fragment>
+
+    <activity
+        android:id="@+id/main_activity"
+        android:name="me.nomi.urdutyper.ui.MainActivity"
+        android:label="MainActivity"
+        tools:layout="@layout/activity_main" />
+
+    <activity
+        android:id="@+id/dashboard_activity"
+        android:name="me.nomi.urdutyper.ui.dashboard.DashboardActivity"
+        android:label="DashboardActivity"
+        tools:layout="@layout/activity_dashboard" />
+
+
+
+
+</navigation>

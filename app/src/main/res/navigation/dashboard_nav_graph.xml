@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dashboard_nav_graph"
+    app:startDestination="@id/dashboard_fragment">
+
+
+    <fragment
+        android:id="@+id/dashboard_fragment"
+        android:name="me.nomi.urdutyper.ui.dashboard.DashboardFragment"
+        android:label="Account"
+        tools:layout="@layout/fragment_dashboard">
+
+        <action
+            android:id="@+id/to_mainActivity"
+            app:destination="@id/main_activity" />
+
+        <!--        <action-->
+        <!--            android:id="@+id/to_dash_activity"-->
+        <!--            app:destination="@id/dash_activity" />-->
+
+    </fragment>
+
+    <activity
+        android:id="@+id/main_activity"
+        android:name="me.nomi.urdutyper.ui.MainActivity"
+        android:label="MainActivity"
+        tools:layout="@layout/activity_main" />
+
+
+</navigation>
