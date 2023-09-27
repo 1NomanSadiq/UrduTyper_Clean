@@ -15,4 +15,6 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "UrduTyper Clean"
-include ':app'
+include ':presentation'
+include ':data'
+include ':domain'
