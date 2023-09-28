@@ -13,6 +13,7 @@ import me.nomi.urdutyper.presentation.base.BaseActivity
 import me.nomi.urdutyper.presentation.ui.dashboard.DashboardActivity
 import me.nomi.urdutyper.presentation.ui.viewmodel.AuthUiState
 import me.nomi.urdutyper.presentation.ui.viewmodel.AuthViewModel
+import me.nomi.urdutyper.presentation.utils.extensions.common.dialog
 import me.nomi.urdutyper.presentation.utils.extensions.common.start
 import me.nomi.urdutyper.presentation.utils.extensions.common.toast
 import me.nomi.urdutyper.presentation.utils.extensions.views.launchAndRepeatWithViewLifecycle
@@ -27,17 +28,13 @@ class MainActivity : BaseActivity<ActivityLoginBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Handle login button click
         binding.loginButton.setOnClickListener {
-            // Get email and password from input fields
             val email = binding.loginEmail.text.toString()
             val password = binding.loginPassword.text.toString()
-            // Validate input fields
             if (email.isNotEmpty() && password.isNotEmpty()) {
-                // Login user with email and password
                 lifecycleScope.launch { viewModel.login(email, password) }
             } else {
-                toast("Missing Field")
+                dialog("Please enter both email and password").show()
             }
         }
 
@@ -64,8 +61,7 @@ class MainActivity : BaseActivity<ActivityLoginBinding>() {
             }
 
             is AuthUiState.Error -> {
-                Toast.makeText(applicationContext, it.message, Toast.LENGTH_LONG)
-                    .show()
+                dialog(it.message).show()
             }
 
             else -> {}

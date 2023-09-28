@@ -7,17 +7,20 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import me.nomi.urdutyper.domain.entity.Image
+import me.nomi.urdutyper.domain.repository.SharedPreferenceRepository
 import me.nomi.urdutyper.domain.usecase.LoadImages
-import me.nomi.urdutyper.data.source.SharedPreference
-import me.nomi.urdutyper.presentation.base.BaseViewModel
+import me.nomi.urdutyper.domain.usecase.Logout
 import me.nomi.urdutyper.domain.utils.dispatchers.DispatchersProviders
 import me.nomi.urdutyper.domain.utils.onError
 import me.nomi.urdutyper.domain.utils.onSuccess
+import me.nomi.urdutyper.presentation.base.BaseViewModel
 import javax.inject.Inject
+
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    prefs: SharedPreference,
+    prefs: SharedPreferenceRepository,
     private val loadImages: LoadImages,
+    private val logout: Logout,
     dispatchers: DispatchersProviders
 ) : BaseViewModel(dispatchers) {
 
@@ -26,9 +29,10 @@ class DashboardViewModel @Inject constructor(
 
     sealed class NavigationState {
         data class LoadImage(val image: Image) : NavigationState()
+        data object Logout : NavigationState()
     }
 
-    private val _navigationState: MutableSharedFlow<NavigationState.LoadImage> =
+    private val _navigationState: MutableSharedFlow<NavigationState> =
         MutableSharedFlow()
     val navigationState = _navigationState.asSharedFlow()
 
@@ -44,6 +48,20 @@ class DashboardViewModel @Inject constructor(
                 _uiState.update {
                     DashboardUiState.Success(images)
                 }
+            }.onError { error ->
+                _uiState.update {
+                    DashboardUiState.Error(
+                        error.message ?: "Failed to load images from the database"
+                    )
+                }
+            }
+    }
+
+    private fun logout() = launchOnMainImmediate {
+        _uiState.update { DashboardUiState.Loading }
+        logout.invoke()
+            .onSuccess {
+                _navigationState.emit(NavigationState.Logout)
             }.onError { error ->
                 _uiState.update {
                     DashboardUiState.Error(

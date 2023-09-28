@@ -18,6 +18,7 @@ import me.nomi.urdutyper.domain.usecase.Register
 import me.nomi.urdutyper.domain.usecase.UserData
 import me.nomi.urdutyper.domain.utils.dispatchers.DispatchersProviders
 import me.nomi.urdutyper.data.source.SharedPreference
+import me.nomi.urdutyper.domain.repository.SharedPreferenceRepository
 import javax.inject.Singleton
 
 @Module
@@ -41,7 +42,7 @@ class DataModule {
 
     @Singleton
     @Provides
-    fun provideSharedPref(@ApplicationContext context: Context): SharedPreference =
+    fun provideSharedPref(@ApplicationContext context: Context): SharedPreferenceRepository =
         SharedPreference(context)
 
     @Provides

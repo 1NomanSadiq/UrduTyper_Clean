@@ -24,8 +24,8 @@ constructor(
 
     sealed class NavigationState {
         // Define your navigation states here if needed
-        object LoggedIn : NavigationState()
-        object NotLoggedIn: NavigationState()
+        data object LoggedIn : NavigationState()
+        data object NotLoggedIn: NavigationState()
     }
 
     private val _viewState = MutableStateFlow<SplashUiState>(SplashUiState.Init)

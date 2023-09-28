@@ -7,11 +7,18 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
 
 abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     protected val binding: VB by lazy { inflateViewBinding(layoutInflater) }
+
+    protected fun goBack() = findNavController().navigateUp()
+
+    protected fun finishActivity() = requireActivity().finish()
+
+    protected fun finishAffinity() = requireActivity().finishAffinity()
 
     protected abstract fun inflateViewBinding(inflater: LayoutInflater): VB
 

@@ -33,7 +33,4 @@
         android:label="DashboardActivity"
         tools:layout="@layout/activity_dashboard" />
 
-
-
-
 </navigation>

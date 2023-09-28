@@ -6,13 +6,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.viewbinding.ViewBinding
-import me.nomi.urdutyper.data.source.SharedPreference
+import me.nomi.urdutyper.domain.repository.SharedPreferenceRepository
 import javax.inject.Inject
 
 abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
 
     @Inject
-    lateinit var prefs: SharedPreference
+    lateinit var prefs: SharedPreferenceRepository
 
     protected val binding: VB by lazy { inflateViewBinding(layoutInflater) }
 

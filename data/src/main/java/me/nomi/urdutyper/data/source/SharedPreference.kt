@@ -2,12 +2,13 @@ package me.nomi.urdutyper.data.source
 
 import android.content.Context
 import android.content.SharedPreferences
+import me.nomi.urdutyper.domain.repository.SharedPreferenceRepository
 import me.nomi.urdutyper.domain.utils.Constants
 
-class SharedPreference(context: Context) {
+class SharedPreference(context: Context) : SharedPreferenceRepository {
     private val prefs: SharedPreferences = context.getSharedPreferences(Constants.PREFS_FILENAME, 0)
 
-    var uid: String
+    override var uid: String
         get() = prefs.getString(Constants.USER_ID, "") ?: ""
         set(value) = prefs.edit().putString(Constants.USER_ID, value).apply()
 //
@@ -31,7 +32,7 @@ class SharedPreference(context: Context) {
 //            }
 //        }
 
-    fun clear() {
+    override fun clear() {
         prefs.edit().clear().apply()
     }
 }

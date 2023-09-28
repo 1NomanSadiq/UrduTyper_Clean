@@ -17,10 +17,4 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
     private val navController by lazy {
         binding.container.getFragment<Fragment>().findNavController()
     }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-
 }
