@@ -3,22 +3,21 @@ package me.nomi.urdutyper.presentation.app.di
 import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import me.nomi.urdutyper.data.repository.FirebaseRepositoryImpl
+import me.nomi.urdutyper.data.source.SharedPreference
 import me.nomi.urdutyper.domain.repository.FirebaseRepository
+import me.nomi.urdutyper.domain.repository.SharedPreferenceRepository
 import me.nomi.urdutyper.domain.usecase.LoadImages
 import me.nomi.urdutyper.domain.usecase.LoginUseCase
 import me.nomi.urdutyper.domain.usecase.Logout
 import me.nomi.urdutyper.domain.usecase.Register
 import me.nomi.urdutyper.domain.usecase.UserData
 import me.nomi.urdutyper.domain.utils.dispatchers.DispatchersProviders
-import me.nomi.urdutyper.data.source.SharedPreference
-import me.nomi.urdutyper.domain.repository.SharedPreferenceRepository
 import javax.inject.Singleton
 
 @Module
@@ -29,13 +28,11 @@ class DataModule {
     @Provides
     fun providefirebaseRepository(
         firebaseAuth: FirebaseAuth,
-        fireStoreDatabase: FirebaseFirestore,
         firebaseDatabase: FirebaseDatabase,
         dispatcherProvider: DispatchersProviders
     ): FirebaseRepository =
         FirebaseRepositoryImpl(
             firebaseAuth,
-            fireStoreDatabase,
             firebaseDatabase,
             dispatcherProvider
         )

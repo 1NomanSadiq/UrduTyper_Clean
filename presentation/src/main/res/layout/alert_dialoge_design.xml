@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_20sdp"
-        app:cardBackgroundColor="@color/white"
+        app:cardBackgroundColor="@color/dialogBackground"
         app:cardCornerRadius="@dimen/_10sdp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -27,7 +27,7 @@
                 android:paddingHorizontal="@dimen/_15sdp"
                 android:text=""
                 android:textAlignment="center"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="@dimen/_12ssp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -38,14 +38,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="@dimen/_20sdp"
-                android:background="@color/light_gray"
+                android:background="@color/buttonPressed"
                 app:layout_constraintTop_toBottomOf="@id/message" />
 
             <View
                 android:id="@+id/line2"
                 android:layout_width="0.5dp"
                 android:layout_height="0dp"
-                android:background="@color/light_gray"
+                android:background="@color/buttonPressed"
                 android:elevation="2dp"
                 app:layout_constraintBottom_toBottomOf="@id/negative"
                 app:layout_constraintStart_toEndOf="@id/negative"
@@ -62,7 +62,7 @@
                 android:text="@android:string/cancel"
                 android:textAlignment="center"
                 android:textAllCaps="false"
-                android:textColor="@color/background"
+                android:textColor="@color/white"
                 android:textSize="@dimen/_15ssp"
                 android:textStyle="bold"
                 android:visibility="visible"
@@ -80,7 +80,7 @@
                 android:text="@android:string/ok"
                 android:textAlignment="center"
                 android:textAllCaps="false"
-                android:textColor="@color/background"
+                android:textColor="@color/white"
                 android:textSize="@dimen/_15ssp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -3,7 +3,6 @@ package me.nomi.urdutyper.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import me.nomi.urdutyper.data.mapper.Mapper.toDomain
@@ -16,22 +15,18 @@ import javax.inject.Inject
 
 class FirebaseRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val fireStoreDatabase: FirebaseFirestore,
     private val firebaseDatabase: FirebaseDatabase,
     private val dispatchers: DispatchersProviders
 ) : FirebaseRepository {
 
     override suspend fun register(
         email: String,
-        password: String,
-        user: User
+        password: String
     ): Result<User> = withContext(dispatchers.getIO()) {
         return@withContext safeApiCall {
             val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
-            fireStoreDatabase.collection("User")
-                .document(firebaseAuth.currentUser!!.uid)
-                .set(user).await()
-            result.user?.toDomain() ?: throw Exception("User not found")
+            firebaseAuth.currentUser?.sendEmailVerification()?.await()
+            result.user?.toDomain() ?: throw Exception("Something went wrong")
         }
     }
 
@@ -44,6 +39,7 @@ class FirebaseRepositoryImpl @Inject constructor(
                 if (user.isEmailVerified) {
                     user.toDomain()
                 } else {
+                    firebaseAuth.signOut()
                     throw Exception("Please verify your email first")
                 }
             } else {

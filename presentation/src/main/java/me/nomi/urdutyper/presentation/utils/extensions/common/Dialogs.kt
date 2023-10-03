@@ -130,7 +130,7 @@ class DialogBuilder(private val ctx: Context) {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         if (!isCustomViewSet)
             dialog.setContentView(binding.root)
-        dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.window?.setWindowAnimations(R.style.dialogStyle)
         dialog.setCancelable(false)
     }

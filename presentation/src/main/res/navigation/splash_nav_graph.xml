@@ -5,31 +5,31 @@
     android:id="@+id/splash_nav_graph"
     app:startDestination="@id/splash_fragment">
 
+
     <fragment
         android:id="@+id/splash_fragment"
-        android:name="me.nomi.urdutyper.presentation.ui.splash.SplashScreenFragment"
+        android:name="me.nomi.urdutyper.presentation.ui.splash.ui.SplashScreenFragment"
         android:label="Splash"
         tools:layout="@layout/fragment_splash_screen">
 
         <action
-            android:id="@+id/to_mainActivity"
-            app:destination="@id/main_activity" />
+            android:id="@+id/to_onboardingActivity"
+            app:destination="@id/onboarding_activity" />
 
         <action
-            android:id="@+id/to_dashboard"
+            android:id="@+id/to_DashboardActivity"
             app:destination="@id/dashboard_activity" />
 
     </fragment>
 
     <activity
-        android:id="@+id/main_activity"
-        android:name="me.nomi.urdutyper.presentation.ui.MainActivity"
-        android:label="MainActivity"
-        tools:layout="@layout/activity_main" />
+        android:id="@+id/onboarding_activity"
+        android:name="me.nomi.urdutyper.presentation.ui.onboarding.ui.OnboardingActivity"
+        tools:layout="@layout/activity_onboarding" />
 
     <activity
         android:id="@+id/dashboard_activity"
-        android:name="me.nomi.urdutyper.presentation.ui.dashboard.DashboardActivity"
+        android:name="me.nomi.urdutyper.presentation.ui.dashboard.ui.DashboardActivity"
         android:label="DashboardActivity"
         tools:layout="@layout/activity_dashboard" />
 
