@@ -46,10 +46,13 @@ object ImageMaker {
             ).show()
             return null
         }
+
         val formatter = SimpleDateFormat("yyyyMMdd_hhmmss", Locale.getDefault())
         val now = Date()
+        val prefs = context.getSharedPreferences("login_data", Context.MODE_PRIVATE);
+        prefs.edit().putString("filename", "UT" + formatter.format(now)).apply()
         val filename =
-            pictureFileDir.path + File.separator + "UT" + formatter.format(now) + ".jpg"
+            pictureFileDir.path + File.separator + prefs.getString("filename", "") + ".jpg"
         pictureFile = File(filename)
         val bitmap = getBitmapFromView(drawView)
         try {
