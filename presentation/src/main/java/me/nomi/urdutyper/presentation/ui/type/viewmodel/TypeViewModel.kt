@@ -29,15 +29,15 @@ class TypeViewModel : ViewModel() {
     val rightGradientColor: Flow<Int> = _rightGradientColor
     val size: Flow<Float> = _size
 
-    val currentGradientOrientation = _gradientOrientation.value
-    val currentFont = _font.value
-    val currentFontNumber = _fontNumber.value
-    val isCurrentlyBold = _isBold.value
-    val isCurrentlyItalic = _isItalic.value
-    val currentTextColor = _textColor.value
-    val currentLeftGradientColor = _leftGradientColor.value
-    val currentRightGradientColor = _rightGradientColor.value
-    val currentSize = _size.value
+    val currentGradientOrientation get() = _gradientOrientation.value
+    val currentFont  get() = _font.value
+    val currentFontNumber get() = _fontNumber.value
+    val isCurrentlyBold get() = _isBold.value
+    val isCurrentlyItalic get() = _isItalic.value
+    val currentTextColor get() = _textColor.value
+    val currentLeftGradientColor get() = _leftGradientColor.value
+    val currentRightGradientColor get() = _rightGradientColor.value
+    val currentSize get() = _size.value
 
     fun setGradientOrientation(orientation: GradientDrawable.Orientation) {
         _gradientOrientation.value = orientation

@@ -38,7 +38,7 @@ class DashboardViewModel @Inject constructor(
     }
 
 
-    private fun loadImageList(uid: String) = launchOnMainImmediate {
+    fun loadImageList(uid: String) = launchOnMainImmediate {
         _uiState.update { DashboardUiState.Loading }
         loadImages(uid)
             .onSuccess { images ->

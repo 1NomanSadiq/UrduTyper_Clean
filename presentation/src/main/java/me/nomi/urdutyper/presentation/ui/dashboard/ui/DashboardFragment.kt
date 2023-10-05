@@ -111,4 +111,9 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>(), DashboardVie
     private fun createNew() =
         findNavController().navigate(DashboardFragmentDirections.toTypeActivity())
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadImageList(prefs.uid)
+    }
+
 }

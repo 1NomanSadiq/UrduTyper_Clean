@@ -41,7 +41,6 @@ import me.nomi.urdutyper.presentation.utils.common.ImageMaker.pictureFile
 import me.nomi.urdutyper.presentation.utils.common.ImageMaker.saveBitMap
 import me.nomi.urdutyper.presentation.utils.common.MultiTouchListener
 import me.nomi.urdutyper.presentation.utils.common.Notification.create
-import me.nomi.urdutyper.presentation.utils.extensions.common.toast
 import me.nomi.urdutyper.presentation.utils.extensions.views.launchAndRepeatWithViewLifecycle
 import me.nomi.urdutyper.presentation.utils.permissions.PermissionHandler
 import me.nomi.urdutyper.presentation.utils.permissions.Permissions.check
@@ -62,7 +61,6 @@ class TypeActivity : AppCompatActivity() {
         binding.edittext2.setOnTouchListener(MultiTouchListener(this))
 
         launchAndRepeatWithViewLifecycle {
-            launch { viewModel.size.collectLatest { binding.edittext2.textSize = it } }
             launch { viewModel.gradientOrientation.collectLatest { setGradientBackground() } }
             launch { viewModel.leftGradientColor.collectLatest { setGradientBackground() } }
             launch { viewModel.rightGradientColor.collectLatest { setGradientBackground() } }
@@ -195,19 +193,43 @@ class TypeActivity : AppCompatActivity() {
                             isChecked && italic.isChecked -> Typeface.BOLD_ITALIC
                             isChecked -> Typeface.BOLD
                             italic.isChecked -> Typeface.ITALIC
-                            else -> Typeface.NORMAL
+                            else -> {
+                                binding.edittext2.setTypeface(
+                                    null,
+                                    Typeface.NORMAL)
+                                var fontNumber = if (viewModel.currentFontNumber == fonts.size - 1) 0
+                                else viewModel.currentFontNumber + 1
+                                viewModel.setFontNumber(fontNumber)
+                                fontNumber = if (viewModel.currentFontNumber == 0) fonts.size -1
+                                else viewModel.currentFontNumber - 1
+                                viewModel.setFontNumber(fontNumber)
+                                Typeface.NORMAL
+                            }
                         }
                         binding.edittext2.setTypeface(binding.edittext2.typeface, typeface)
                     }
+
                     italic.setOnCheckedChangeListener { _, isChecked ->
                         val typeface = when {
                             isChecked && bold.isChecked -> Typeface.BOLD_ITALIC
                             isChecked -> Typeface.ITALIC
                             bold.isChecked -> Typeface.BOLD
-                            else -> Typeface.NORMAL
+                            else -> {
+                                binding.edittext2.setTypeface(
+                                    null,
+                                    Typeface.NORMAL)
+                                var fontNumber = if (viewModel.currentFontNumber == fonts.size - 1) 0
+                                else viewModel.currentFontNumber + 1
+                                viewModel.setFontNumber(fontNumber)
+                                fontNumber = if (viewModel.currentFontNumber == 0) fonts.size -1
+                                else viewModel.currentFontNumber - 1
+                                viewModel.setFontNumber(fontNumber)
+                                Typeface.NORMAL
+                            }
                         }
                         binding.edittext2.setTypeface(binding.edittext2.typeface, typeface)
                     }
+
                     fontSize.progress = viewModel.currentSize.toInt() - 20
                     alignLeft.setOnClickListener {
                         binding.edittext2.textAlignment = View.TEXT_ALIGNMENT_VIEW_START
@@ -241,10 +263,10 @@ class TypeActivity : AppCompatActivity() {
                     textColor.setOnClickListener { showTextColorPickDialog() }
 
                     myFont.setOnClickListener {
-                        toast(viewModel.currentFontNumber.toString())
-                        viewModel.setFontNumber(
-                            if (viewModel.currentFontNumber == fonts.size - 1) 0
-                            else viewModel.currentFontNumber + 1)
+                        val fontNumber = if (viewModel.currentFontNumber == fonts.size - 1) 0
+                        else viewModel.currentFontNumber + 1
+                        viewModel.setFontNumber(fontNumber)
+
                     }
 
                     fontSize.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
@@ -361,10 +383,11 @@ class TypeActivity : AppCompatActivity() {
                     if (task.isSuccessful) {
                         mountainImagesRef.downloadUrl.addOnSuccessListener { uri: Uri ->
                             ref.child(
-                                prefs.getString("filename", "")?: ""
+                                prefs.getString("filename", "") ?: ""
                             ).setValue(uri.toString())
                         }
-                        Snackbar.make(binding.root2, "Uploaded Successfully", Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(binding.root2, "Uploaded Successfully", Snackbar.LENGTH_LONG)
+                            .show()
                     } else {
                         Snackbar.make(binding.root2, "Uploaded Failed", Snackbar.LENGTH_LONG).show()
                     }
