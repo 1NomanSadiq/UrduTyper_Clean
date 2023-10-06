@@ -210,6 +210,10 @@ class DialogBuilder(private val ctx: Context) {
         binding.positive.text = ctx.getString(textResource)
         binding.positive.setOnClickListener {
             isNegativeSet = false
+            binding.positive.text = "OK"
+            binding.negative.text = "Cancel"
+            binding.positive.setOnClickListener {dismiss()}
+            binding.negative.setOnClickListener { dismiss() }
             onPositiveClick()
         }
     }
@@ -218,6 +222,10 @@ class DialogBuilder(private val ctx: Context) {
         isPositiveSet = true
         binding.positive.text = title
         binding.positive.setOnClickListener {
+            binding.positive.text = "OK"
+            binding.negative.text = "Cancel"
+            binding.positive.setOnClickListener {dismiss()}
+            binding.negative.setOnClickListener { dismiss() }
             isNegativeSet = false
             onPositiveClick()
         }
@@ -230,6 +238,10 @@ class DialogBuilder(private val ctx: Context) {
         isNegativeSet = true
         binding.negative.text = ctx.getString(textResource)
         binding.negative.setOnClickListener {
+            binding.positive.text = "OK"
+            binding.negative.text = "Cancel"
+            binding.positive.setOnClickListener {dismiss()}
+            binding.negative.setOnClickListener { dismiss() }
             isNegativeSet = false
             onNegativeClick()
         }
@@ -239,6 +251,10 @@ class DialogBuilder(private val ctx: Context) {
         isNegativeSet = true
         binding.negative.text = title
         binding.negative.setOnClickListener {
+            binding.positive.text = "OK"
+            binding.negative.text = "Cancel"
+            binding.positive.setOnClickListener {dismiss()}
+            binding.negative.setOnClickListener { dismiss() }
             isNegativeSet = false
             onNegativeClick()
         }

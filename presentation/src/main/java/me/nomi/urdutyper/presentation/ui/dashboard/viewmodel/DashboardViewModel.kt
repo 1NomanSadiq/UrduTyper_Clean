@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import me.nomi.urdutyper.domain.entity.Image
 import me.nomi.urdutyper.domain.repository.SharedPreferenceRepository
+import me.nomi.urdutyper.domain.usecase.DeleteImage
 import me.nomi.urdutyper.domain.usecase.LoadImages
 import me.nomi.urdutyper.domain.usecase.Logout
 import me.nomi.urdutyper.domain.utils.dispatchers.DispatchersProviders
@@ -23,6 +24,7 @@ class DashboardViewModel @Inject constructor(
     prefs: SharedPreferenceRepository,
     private val loadImages: LoadImages,
     private val logout: Logout,
+    private val deleteImage: DeleteImage,
     dispatchers: DispatchersProviders
 ) : BaseViewModel(dispatchers) {
 
@@ -65,6 +67,22 @@ class DashboardViewModel @Inject constructor(
                 }
             }
     }
+
+    fun deleteImage(uid: String, fileName: String, url: String) = launchOnMainImmediate {
+        _uiState.update { DashboardUiState.Loading }
+        deleteImage.invoke(uid, fileName, url)
+            .onSuccess {
+                _navigationState.emit(DashboardNavigationState.ImageDeleted)
+            }.onError { error ->
+                _uiState.update {
+                    DashboardUiState.Error(
+                        error.message ?: "Failed to logout"
+                    )
+                }
+            }
+    }
+
+
 
     fun onImageClick(image: Image) = launchOnMainImmediate {
         _navigationState.emit(DashboardNavigationState.ShowBottomSheet(image))

@@ -6,6 +6,7 @@
     </data>
 
     <LinearLayout
+        android:layout_marginHorizontal="@dimen/_5sdp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -26,6 +27,8 @@
             android:layout_height="wrap_content"
             android:focusableInTouchMode="false"
             android:gravity="center_horizontal"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:text="Loading..."
             android:textColor="@color/white" />
 

@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.FileProvider
+import me.nomi.urdutyper.domain.entity.Image
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -71,6 +72,24 @@ object ImageMaker {
             pictureFile!!
         )
     }
+
+    fun getListOfImages(context: Context): List<Image> {
+        val pictureFileDir = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+            "Nomiii"
+        )
+        return pictureFileDir.listFiles()?.map { file ->
+            Image(
+                fileName = file.name,
+                url = FileProvider.getUriForFile(
+                    context,
+                    context.applicationContext.packageName + ".provider",
+                    file
+                ).toString()
+            )
+        }?: emptyList()
+    }
+
 
     @Throws(IOException::class)
     fun getImageFromImageView(context: Context, iv: ImageView, filename: String): Uri? {

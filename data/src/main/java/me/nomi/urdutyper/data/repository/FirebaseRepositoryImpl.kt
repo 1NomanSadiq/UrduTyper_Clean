@@ -3,6 +3,7 @@ package me.nomi.urdutyper.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import me.nomi.urdutyper.data.mapper.Mapper.toDomain
@@ -16,6 +17,7 @@ import javax.inject.Inject
 class FirebaseRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val firebaseDatabase: FirebaseDatabase,
+    private val firebaseStorage: FirebaseStorage,
     private val dispatchers: DispatchersProviders
 ) : FirebaseRepository {
 
@@ -74,6 +76,15 @@ class FirebaseRepositoryImpl @Inject constructor(
                 images.add(Image(filename, url))
             }
             images
+        }
+    }
+
+    override suspend fun deleteImage(uid: String, fileName: String, url: String): Result<Unit> {
+        return safeApiCall {
+            firebaseDatabase.reference.child(uid).child("Images").child(fileName).removeValue()
+            val storageReference =
+                firebaseStorage.getReferenceFromUrl(url)
+            storageReference.delete()
         }
     }
 }

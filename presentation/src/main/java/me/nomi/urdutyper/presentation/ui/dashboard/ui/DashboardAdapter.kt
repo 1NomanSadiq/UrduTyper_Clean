@@ -10,7 +10,7 @@ class DashboardAdapter : BaseAdapter<Image, SinglerowBinding>(R.layout.singlerow
         binding.textView.text = item.fileName
         Glide.with(binding.root.context)
             .load(item.url)
-            .placeholder(R.drawable.not_found)
+            .error(R.drawable.not_found)
             .centerInside()
             .into(binding.imageView)
     }

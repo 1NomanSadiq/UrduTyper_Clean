@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Build
 import android.widget.Toast
 import androidx.core.view.isVisible
+import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.AndroidEntryPoint
 import me.nomi.urdutyper.R
 import me.nomi.urdutyper.databinding.BottomSheetImageBinding
@@ -19,10 +20,11 @@ import java.io.IOException
 @AndroidEntryPoint
 class ImageSheet : BaseBottomSheetDialogFragment<BottomSheetImageBinding>() {
     var loadImage: ((BottomSheetImageBinding) -> Unit)? = null
+    var deleteImage: (() -> Unit)? = null
+    var fileName = System.currentTimeMillis().toString()
     override fun layoutId(): Int = R.layout.bottom_sheet_image
     override fun onViewCreated(binding: BottomSheetImageBinding) {
         loadImage?.invoke(binding)
-        binding.delete.isVisible = false
 
         binding.saveBigImages.setOnClickListener {
             checkPermission(object : PermissionHandler {
@@ -36,7 +38,7 @@ class ImageSheet : BaseBottomSheetDialogFragment<BottomSheetImageBinding>() {
                         )
                         Notification.create(
                             requireActivity(),
-                            System.currentTimeMillis().toString() + ".jpg",
+                            "$fileName.jpg",
                             uri
                         )
                         Toast.makeText(requireActivity(), "Saved!", Toast.LENGTH_LONG).show()
@@ -53,6 +55,16 @@ class ImageSheet : BaseBottomSheetDialogFragment<BottomSheetImageBinding>() {
                     ).show()
                 }
             })
+        }
+
+        binding.delete.setOnClickListener {
+            dialog("Are you sure want to delete this file?") {
+                negativeButton("No")
+                positiveButton("Yes") {
+                    dismiss()
+                    deleteImage?.invoke()
+                }
+            }.show()
         }
     }
 

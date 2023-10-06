@@ -1,6 +1,5 @@
 package me.nomi.urdutyper.presentation.ui.dashboard.ui
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
