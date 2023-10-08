@@ -1,27 +1,29 @@
 package me.nomi.urdutyper.presentation.ui.dashboard.ui
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import androidx.core.net.toUri
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
-import me.nomi.urdutyper.R
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import me.nomi.urdutyper.databinding.FragmentLocalDashboardBinding
 import me.nomi.urdutyper.domain.entity.Image
 import me.nomi.urdutyper.presentation.app.base.BaseFragment
 import me.nomi.urdutyper.presentation.ui.dashboard.view.DashboardView
+import me.nomi.urdutyper.presentation.ui.dashboard.viewmodel.SharedViewModel
 import me.nomi.urdutyper.presentation.utils.common.ImageMaker.getListOfImages
 import me.nomi.urdutyper.presentation.utils.extensions.adapter.attach
 import me.nomi.urdutyper.presentation.utils.extensions.common.dialog
+import me.nomi.urdutyper.presentation.utils.extensions.views.launchAndRepeatWithViewLifecycle
 
 
 @AndroidEntryPoint
 class LocalDashboardFragment : BaseFragment<FragmentLocalDashboardBinding>(), DashboardView {
-    private lateinit var imageSheet: ImageSheet
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val adapter by lazy { DashboardAdapter() }
 
     override fun inflateViewBinding(inflater: LayoutInflater) =
@@ -29,69 +31,53 @@ class LocalDashboardFragment : BaseFragment<FragmentLocalDashboardBinding>(), Da
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupViews()
+        setCollector()
+        init()
+    }
+
+    private fun init() {
+        sharedViewModel.localImageList.value = getListOfImages(requireActivity())
     }
 
     private fun setupViews() {
+        binding.swipeRefresh.setOnRefreshListener {
+            sharedViewModel.shouldRefresh.value = true
+            binding.swipeRefresh.isRefreshing = false
+        }
         binding.recView.attach(
             layoutManager = GridLayoutManager(requireActivity(), 3),
             adapter = adapter,
-            onItemClick = { _, item ->
-                openImage(item)
+            onItemClick = { position, _ ->
+                sharedViewModel.position.value = position
+                goToViewPagerFragment()
             }
         )
     }
 
+    private fun setCollector() {
+        launchAndRepeatWithViewLifecycle {
+            launch { sharedViewModel.localImageList.collectLatest { showImages(it) } }
+            launch { sharedViewModel.shouldRefresh.collectLatest { refresh(it) } }
+        }
+    }
+
+    private fun refresh(shouldRefresh: Boolean) {
+        if (shouldRefresh)
+            sharedViewModel.localImageList.value = getListOfImages(requireActivity())
+    }
+
     override fun showImages(images: List<Image>) {
+        binding.noImage.isVisible = images.isEmpty()
         adapter.pushData(images)
+        binding.swipeRefresh.isRefreshing = false
+        sharedViewModel.shouldRefresh.value = false
     }
 
     override fun showMessageDialog(message: String) {
         dialog(message).show()
     }
 
-    override fun openImage(image: Image) {
-        imageSheet = ImageSheet()
-        imageSheet.loadImage = {
-            it.saveBigImages.isVisible = false
-            Glide.with(it.root.context)
-                .load(image.url)
-                .error(R.drawable.not_found)
-                .into(it.bigImage)
-        }
-        imageSheet.fileName = image.fileName
-        imageSheet.deleteImage = {
-            deleteFile(image.url.toUri())
-            dismissSheet()
-        }
-        imageSheet.show(
-            requireActivity().supportFragmentManager,
-            "openImageSheet"
-        )
-    }
-
-    private fun deleteFile(contentUri: Uri): Boolean {
-        return try {
-            val deleteResult = context?.contentResolver?.delete(contentUri, null, null)
-            if (deleteResult == -1) {
-                dialog("Error deleting file").show()
-                return false
-            } else {
-                showImages(getListOfImages(requireActivity()))
-                return true
-            }
-        } catch (e: Exception) {
-            dialog(e.localizedMessage ?: "Something went wrong").show()
-            false
-        }
-    }
-
-
-    private fun dismissSheet() {
-        imageSheet.dismiss()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        showImages(getListOfImages(requireActivity()))
+    override fun goToViewPagerFragment() {
+        findNavController().navigate(DashboardFragmentDirections.toLocalViewPagerFragment())
     }
 }

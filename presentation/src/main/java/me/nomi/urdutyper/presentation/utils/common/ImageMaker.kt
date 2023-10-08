@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import me.nomi.urdutyper.domain.entity.Image
+import me.nomi.urdutyper.presentation.utils.extensions.common.dialog
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -80,14 +81,30 @@ object ImageMaker {
         )
         return pictureFileDir.listFiles()?.map { file ->
             Image(
-                fileName = file.name,
+                name = file.name,
                 url = FileProvider.getUriForFile(
                     context,
                     context.applicationContext.packageName + ".provider",
                     file
                 ).toString()
             )
-        }?: emptyList()
+        } ?: emptyList()
+    }
+
+    fun deleteFile(context: Context, contentUri: Uri, onSuccess: (() -> Unit)): Boolean {
+        return try {
+            val deleteResult = context.contentResolver?.delete(contentUri, null, null)
+            if (deleteResult == -1) {
+                context.dialog("Error deleting file").show()
+                return false
+            } else {
+                onSuccess.invoke()
+                return true
+            }
+        } catch (e: Exception) {
+            context.dialog(e.localizedMessage ?: "Something went wrong").show()
+            false
+        }
     }
 
 

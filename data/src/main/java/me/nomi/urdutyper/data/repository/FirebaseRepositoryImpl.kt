@@ -79,11 +79,11 @@ class FirebaseRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteImage(uid: String, fileName: String, url: String): Result<Unit> {
+    override suspend fun deleteImage(uid: String, file: Image): Result<Unit> {
         return safeApiCall {
-            firebaseDatabase.reference.child(uid).child("Images").child(fileName).removeValue()
+            firebaseDatabase.reference.child(uid).child("Images").child(file.name).removeValue()
             val storageReference =
-                firebaseStorage.getReferenceFromUrl(url)
+                firebaseStorage.getReferenceFromUrl(file.url)
             storageReference.delete()
         }
     }

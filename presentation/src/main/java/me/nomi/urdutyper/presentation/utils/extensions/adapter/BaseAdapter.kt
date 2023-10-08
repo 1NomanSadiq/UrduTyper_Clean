@@ -68,6 +68,7 @@ abstract class BaseAdapter<T, B : ViewDataBinding>(
 
     fun isEmpty() = itemCount == 0
     fun getItem(position: Int): T = listDiffer.currentList[position]
+    fun getItemPosition(item: T): Int = getData().indexOf(item)
     fun removeItem(item: T) {
         val data = getData().toMutableList()
         data.remove(item)

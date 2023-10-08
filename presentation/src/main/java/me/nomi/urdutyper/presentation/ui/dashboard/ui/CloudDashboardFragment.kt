@@ -3,13 +3,14 @@ package me.nomi.urdutyper.presentation.ui.dashboard.ui
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import me.nomi.urdutyper.R
 import me.nomi.urdutyper.databinding.FragmentCloudDashboardBinding
 import me.nomi.urdutyper.domain.entity.Image
 import me.nomi.urdutyper.presentation.app.base.BaseFragment
@@ -17,23 +18,32 @@ import me.nomi.urdutyper.presentation.ui.dashboard.state.DashboardNavigationStat
 import me.nomi.urdutyper.presentation.ui.dashboard.state.DashboardUiState
 import me.nomi.urdutyper.presentation.ui.dashboard.view.DashboardView
 import me.nomi.urdutyper.presentation.ui.dashboard.viewmodel.DashboardViewModel
+import me.nomi.urdutyper.presentation.ui.dashboard.viewmodel.SharedViewModel
 import me.nomi.urdutyper.presentation.utils.extensions.adapter.attach
 import me.nomi.urdutyper.presentation.utils.extensions.common.dialog
-import me.nomi.urdutyper.presentation.utils.extensions.common.toast
 import me.nomi.urdutyper.presentation.utils.extensions.views.launchAndRepeatWithViewLifecycle
 
 
 @AndroidEntryPoint
 class CloudDashboardFragment : BaseFragment<FragmentCloudDashboardBinding>(), DashboardView {
     private val viewModel: DashboardViewModel by viewModels()
-    private lateinit var imageSheet: ImageSheet
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val adapter by lazy { DashboardAdapter() }
 
-    override fun inflateViewBinding(inflater: LayoutInflater) = FragmentCloudDashboardBinding.inflate(inflater)
+    override fun inflateViewBinding(inflater: LayoutInflater) =
+        FragmentCloudDashboardBinding.inflate(inflater)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        init()
         setupViews()
         observeViewModel()
+    }
+
+    private fun init() {
+        binding.swipeRefresh.setOnRefreshListener {
+            sharedViewModel.shouldRefresh.value = true
+            binding.swipeRefresh.isRefreshing = false
+        }
     }
 
     private fun setupViews() {
@@ -45,8 +55,8 @@ class CloudDashboardFragment : BaseFragment<FragmentCloudDashboardBinding>(), Da
         binding.recView.attach(
             layoutManager = GridLayoutManager(requireActivity(), 3),
             adapter = adapter,
-            onItemClick = { _, item ->
-                viewModel.onImageClick(item)
+            onItemClick = { position, _ ->
+                viewModel.onImageClick(adapter.getData(), position)
             }
         )
     }
@@ -66,53 +76,47 @@ class CloudDashboardFragment : BaseFragment<FragmentCloudDashboardBinding>(), Da
         launchAndRepeatWithViewLifecycle {
             launch { uiState.collect { handleUiState(it) } }
             launch { navigationState.collect { handleNavigationState(it) } }
+            launch { sharedViewModel.cloudImageList.collectLatest { showImages(it) } }
+            launch { sharedViewModel.shouldRefresh.collectLatest { refresh(it) } }
         }
+    }
+
+    private fun refresh(shouldRefresh: Boolean) {
+        if (shouldRefresh)
+            viewModel.loadImageList(prefs.uid)
     }
 
     private fun handleUiState(it: DashboardUiState) {
         when (it) {
             is DashboardUiState.Error -> showMessageDialog(it.message)
-            is DashboardUiState.ShowImages -> showImages(it.images)
+            is DashboardUiState.ShowImages -> sharedViewModel.cloudImageList.value = it.images
             else -> {}
         }
     }
 
     private fun handleNavigationState(state: DashboardNavigationState) = when (state) {
         is DashboardNavigationState.Logout -> logout()
-        is DashboardNavigationState.ShowBottomSheet -> openImage(state.image)
-        is DashboardNavigationState.ImageDeleted -> dismissSheet()
+        is DashboardNavigationState.GoToViewPagerFragment -> {
+            sharedViewModel.cloudImageList.value = state.images
+            sharedViewModel.position.value = state.position
+            goToViewPagerFragment()
+        }
+
+        is DashboardNavigationState.ImageDeleted -> {}
     }
 
     override fun showImages(images: List<Image>) {
+        binding.noImage.isVisible = images.isEmpty()
         adapter.pushData(images)
+        sharedViewModel.shouldRefresh.value = false
     }
 
     override fun showMessageDialog(message: String) {
         dialog(message).show()
     }
 
-    override fun openImage(image: Image) {
-        imageSheet = ImageSheet()
-        imageSheet.loadImage = {
-            Glide.with(it.root.context)
-                .load(image.url)
-                .error(R.drawable.not_found)
-                .into(it.bigImage)
-        }
-        imageSheet.fileName = image.fileName
-        imageSheet.deleteImage = {
-            viewModel.deleteImage(prefs.uid, image.fileName, image.url)
-        }
-        imageSheet.show(
-            requireActivity().supportFragmentManager,
-            "openImageSheet"
-        )
-    }
-
-    private fun dismissSheet() {
-        viewModel.loadImageList(prefs.uid)
-        imageSheet.dismiss()
-        toast("Deleted")
+    override fun goToViewPagerFragment() {
+        findNavController().navigate(DashboardFragmentDirections.toCloudViewPagerFragment())
     }
 
     private fun logout() {
@@ -122,10 +126,4 @@ class CloudDashboardFragment : BaseFragment<FragmentCloudDashboardBinding>(), Da
 
     private fun createNew() =
         findNavController().navigate(DashboardFragmentDirections.toTypeActivity())
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.loadImageList(prefs.uid)
-    }
-
 }

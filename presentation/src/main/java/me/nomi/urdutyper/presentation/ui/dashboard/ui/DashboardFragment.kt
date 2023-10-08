@@ -3,6 +3,7 @@ package me.nomi.urdutyper.presentation.ui.dashboard.ui
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import androidx.activity.addCallback
 import androidx.viewpager2.widget.ViewPager2
 import dagger.hilt.android.AndroidEntryPoint
 import me.nomi.urdutyper.R
@@ -33,5 +34,20 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
             }
             true
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (binding.viewPager.currentItem == 1) {
+                binding.viewPager.currentItem = 0
+            } else {
+                isEnabled = false
+                activity?.onBackPressed()
+            }
+        }
+
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.viewPager.adapter = null
     }
 }

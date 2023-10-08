@@ -10,5 +10,5 @@ interface FirebaseRepository {
     suspend fun logOut(): Result<Unit>
     suspend fun getUserData(): Result<User>
     suspend fun loadImages(uid: String): Result<List<Image>>
-    suspend fun deleteImage(uid: String, fileName: String, url: String): Result<Unit>
+    suspend fun deleteImage(uid: String, file: Image): Result<Unit>
 }

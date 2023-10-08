@@ -7,45 +7,61 @@
 
     </data>
 
-    <LinearLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/background"
-        android:orientation="vertical"
-        tools:context=".presentation.ui.dashboard.ui.DashboardActivity">
+        android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/logOut"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="end"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/icon_logout_button" />
-
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/background"
+            android:orientation="vertical"
+            tools:context=".presentation.ui.dashboard.ui.DashboardActivity">
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/logOut"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="end"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/icon_logout_button" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recView"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent">
 
-            <com.getbase.floatingactionbutton.FloatingActionButton
-                android:id="@+id/newImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                app:fab_colorNormal="@color/button"
-                app:fab_colorPressed="@color/buttonPressed"
-                app:fab_icon="@drawable/baseline_add_24"
-                app:fab_size="normal"
-                app:fab_title="New" />
 
-        </RelativeLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
-    </LinearLayout>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/no_image"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textSize="@dimen/_15ssp"
+                    android:textColor="@color/white"
+                    android:text="No image found"/>
+
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/newImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    app:fab_colorNormal="@color/button"
+                    app:fab_colorPressed="@color/buttonPressed"
+                    app:fab_icon="@drawable/baseline_add_24"
+                    app:fab_size="normal"
+                    app:fab_title="New" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

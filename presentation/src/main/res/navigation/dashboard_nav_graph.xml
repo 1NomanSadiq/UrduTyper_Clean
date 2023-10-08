@@ -19,6 +19,26 @@
             android:id="@+id/to_typeActivity"
             app:destination="@id/type_activity" />
 
+        <action
+            android:id="@+id/to_localViewPagerFragment"
+            app:destination="@id/local_viewpager_fragment" />
+
+        <action
+            android:id="@+id/to_cloudViewPagerFragment"
+            app:destination="@id/cloud_viewpager_fragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/local_viewpager_fragment"
+        android:name="me.nomi.urdutyper.presentation.ui.dashboard.ui.LocalViewPagerFragment"
+        tools:layout="@layout/fragment_viewpager">
+    </fragment>
+
+    <fragment
+        android:id="@+id/cloud_viewpager_fragment"
+        android:name="me.nomi.urdutyper.presentation.ui.dashboard.ui.CloudViewPagerFragment"
+        tools:layout="@layout/fragment_viewpager">
     </fragment>
 
     <activity

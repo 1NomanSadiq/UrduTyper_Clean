@@ -6,23 +6,39 @@
 
     </data>
 
-    <LinearLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/background"
-        android:orientation="vertical"
-        tools:context=".presentation.ui.dashboard.ui.DashboardActivity">
+        android:layout_height="match_parent">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/background"
+            android:orientation="vertical"
+            tools:context=".presentation.ui.dashboard.ui.DashboardActivity">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recView"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent">
 
-        </RelativeLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
-    </LinearLayout>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/no_image"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textSize="@dimen/_15ssp"
+                    android:textColor="@color/white"
+                    android:text="No image found"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

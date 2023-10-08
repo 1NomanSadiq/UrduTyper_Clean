@@ -1,55 +1,57 @@
 package me.nomi.urdutyper.presentation.ui.dashboard.ui
 
 import android.Manifest
+import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
-import com.google.firebase.storage.FirebaseStorage
-import dagger.hilt.android.AndroidEntryPoint
+import com.bumptech.glide.Glide
 import me.nomi.urdutyper.R
 import me.nomi.urdutyper.databinding.BottomSheetImageBinding
+import me.nomi.urdutyper.domain.entity.Image
 import me.nomi.urdutyper.presentation.utils.common.ImageMaker
 import me.nomi.urdutyper.presentation.utils.common.Notification
-import me.nomi.urdutyper.presentation.utils.extensions.adapter.BaseBottomSheetDialogFragment
+import me.nomi.urdutyper.presentation.utils.extensions.adapter.BaseAdapter
 import me.nomi.urdutyper.presentation.utils.extensions.common.dialog
 import me.nomi.urdutyper.presentation.utils.permissions.PermissionHandler
-import me.nomi.urdutyper.presentation.utils.permissions.Permissions.check
+import me.nomi.urdutyper.presentation.utils.permissions.Permissions
 import java.io.IOException
 
-@AndroidEntryPoint
-class ImageSheet : BaseBottomSheetDialogFragment<BottomSheetImageBinding>() {
-    var loadImage: ((BottomSheetImageBinding) -> Unit)? = null
-    var deleteImage: (() -> Unit)? = null
-    var fileName = System.currentTimeMillis().toString()
-    override fun layoutId(): Int = R.layout.bottom_sheet_image
-    override fun onViewCreated(binding: BottomSheetImageBinding) {
-        loadImage?.invoke(binding)
-
+class BottomSheetViewPagerAdapter :
+    BaseAdapter<Image, BottomSheetImageBinding>(R.layout.bottom_sheet_image) {
+    var isCloud = true
+    var onDelete: ((Image) -> Unit)? = null
+    override fun bind(binding: BottomSheetImageBinding, item: Image) {
+        binding.saveBigImages.isVisible = isCloud
+        Glide.with(binding.root.context).load(item.url).error(R.drawable.not_found)
+            .into(binding.bigImage)
         binding.saveBigImages.setOnClickListener {
-            checkPermission(object : PermissionHandler {
+            checkPermission(binding.root.context, object : PermissionHandler {
                 override fun onGranted() {
                     val uri: Uri?
                     try {
                         uri = ImageMaker.getImageFromImageView(
-                            requireActivity(),
+                            binding.root.context,
                             binding.bigImage,
                             System.currentTimeMillis().toString()
                         )
                         Notification.create(
-                            requireActivity(),
-                            "$fileName.jpg",
+                            binding.root.context,
+                            "${item.name}.jpg",
                             uri
                         )
-                        Toast.makeText(requireActivity(), "Saved!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(binding.root.context, "Saved!", Toast.LENGTH_LONG).show()
                     } catch (e: IOException) {
-                        dialog(e.localizedMessage ?: "Something went wrong").show()
+                        binding.root.context.dialog(e.localizedMessage ?: "Something went wrong")
+                            .show()
                     }
                 }
 
                 override fun onDenied() {
                     Toast.makeText(
-                        requireActivity(),
+                        binding.root.context,
                         "Required Permissions are denied",
                         Toast.LENGTH_SHORT
                     ).show()
@@ -58,17 +60,22 @@ class ImageSheet : BaseBottomSheetDialogFragment<BottomSheetImageBinding>() {
         }
 
         binding.delete.setOnClickListener {
-            dialog("Are you sure want to delete this file?") {
+            binding.root.context.dialog("Are you sure want to delete this file?") {
                 negativeButton("No")
                 positiveButton("Yes") {
                     dismiss()
-                    deleteImage?.invoke()
+                    if (!isCloud)
+                        ImageMaker.deleteFile(binding.root.context, item.url.toUri()) {
+                            removeItem(item)
+                            onDelete?.invoke(item)
+                        }
+                    else onDelete?.invoke(item)
                 }
             }.show()
         }
     }
 
-    private fun checkPermission(handler: PermissionHandler) {
+    private fun checkPermission(context: Context, handler: PermissionHandler) {
         val firstPermission: String
         val secondPermission: String
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -79,7 +86,6 @@ class ImageSheet : BaseBottomSheetDialogFragment<BottomSheetImageBinding>() {
             secondPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
         }
         val permissions = arrayOf(firstPermission, secondPermission)
-        check(requireActivity(), permissions.toSet().toTypedArray(), handler)
+        Permissions.check(context, permissions.toSet().toTypedArray(), handler)
     }
-
 }

@@ -7,7 +7,7 @@ import me.nomi.urdutyper.domain.entity.Image
 import me.nomi.urdutyper.presentation.utils.extensions.adapter.BaseAdapter
 class DashboardAdapter : BaseAdapter<Image, SinglerowBinding>(R.layout.singlerow) {
     override fun bind(binding: SinglerowBinding, item: Image) {
-        binding.textView.text = item.fileName
+        binding.textView.text = item.name
         Glide.with(binding.root.context)
             .load(item.url)
             .error(R.drawable.not_found)

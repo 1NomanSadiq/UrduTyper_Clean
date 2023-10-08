@@ -44,7 +44,7 @@ class DashboardViewModel @Inject constructor(
         _uiState.update { DashboardUiState.Loading }
         loadImages(uid)
             .onSuccess { images ->
-                _uiState.update { DashboardUiState.ShowImages(images) }
+                    _uiState.update { DashboardUiState.ShowImages(images) }
             }.onError { error ->
                 _uiState.update {
                     DashboardUiState.Error(
@@ -68,11 +68,11 @@ class DashboardViewModel @Inject constructor(
             }
     }
 
-    fun deleteImage(uid: String, fileName: String, url: String) = launchOnMainImmediate {
+    fun deleteImage(uid: String, file: Image) = launchOnMainImmediate {
         _uiState.update { DashboardUiState.Loading }
-        deleteImage.invoke(uid, fileName, url)
+        deleteImage.invoke(uid, file)
             .onSuccess {
-                _navigationState.emit(DashboardNavigationState.ImageDeleted)
+                _navigationState.emit(DashboardNavigationState.ImageDeleted(file))
             }.onError { error ->
                 _uiState.update {
                     DashboardUiState.Error(
@@ -83,8 +83,7 @@ class DashboardViewModel @Inject constructor(
     }
 
 
-
-    fun onImageClick(image: Image) = launchOnMainImmediate {
-        _navigationState.emit(DashboardNavigationState.ShowBottomSheet(image))
+    fun onImageClick(images: List<Image>, position: Int) = launchOnMainImmediate {
+        _navigationState.emit(DashboardNavigationState.GoToViewPagerFragment(images, position))
     }
 }
