@@ -14,7 +14,7 @@ fun <T> RecyclerView.attach(
     itemDecoration: RecyclerView.ItemDecoration? = null,
     hasFixedSize: Boolean = false,
     snap: androidx.recyclerview.widget.SnapHelper? = null,
-    onBottomReached: (() -> Unit)? = null,
+    onBottomReached: ((Boolean) -> Unit)? = null,
     onLongClickListener: ((Int, T) -> Boolean)? = null,
     onItemClick: ((Int, T) -> Unit)? = null,
     isNestedScrollingEnabled: Boolean = false
@@ -43,7 +43,7 @@ fun <T> RecyclerView.attach(
     if (onBottomReached != null) {
         adapter.onBottomReachedListener = {
             Log.d("RecyclerView", "OnBottomReached")
-            onBottomReached()
+            onBottomReached(it)
         }
     }
 

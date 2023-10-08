@@ -9,7 +9,7 @@ import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import me.nomi.urdutyper.R
-import me.nomi.urdutyper.databinding.BottomSheetImageBinding
+import me.nomi.urdutyper.databinding.ItemOpenImageBinding
 import me.nomi.urdutyper.domain.entity.Image
 import me.nomi.urdutyper.presentation.utils.common.ImageMaker
 import me.nomi.urdutyper.presentation.utils.common.Notification
@@ -19,11 +19,11 @@ import me.nomi.urdutyper.presentation.utils.permissions.PermissionHandler
 import me.nomi.urdutyper.presentation.utils.permissions.Permissions
 import java.io.IOException
 
-class BottomSheetViewPagerAdapter :
-    BaseAdapter<Image, BottomSheetImageBinding>(R.layout.bottom_sheet_image) {
+class FragmentViewPagerAdapter :
+    BaseAdapter<Image, ItemOpenImageBinding>(R.layout.item_open_image) {
     var isCloud = true
     var onDelete: ((Image) -> Unit)? = null
-    override fun bind(binding: BottomSheetImageBinding, item: Image) {
+    override fun bind(binding: ItemOpenImageBinding, item: Image) {
         binding.saveBigImages.isVisible = isCloud
         Glide.with(binding.root.context).load(item.url).error(R.drawable.not_found)
             .into(binding.bigImage)

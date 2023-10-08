@@ -124,7 +124,7 @@ val Context.dropBoxManager: DropBoxManager
     get() = getSystemService(Context.DROPBOX_SERVICE) as DropBoxManager
 
 val Context.inputMethodManager: InputMethodManager
-    get() = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    get() = getSystemService(InputMethodManager::class.java)
 
 val Context.inputManager: InputManager
     get() = getSystemService(Context.INPUT_SERVICE) as InputManager

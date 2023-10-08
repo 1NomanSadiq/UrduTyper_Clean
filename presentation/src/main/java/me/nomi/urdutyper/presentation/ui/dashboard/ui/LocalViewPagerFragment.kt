@@ -13,12 +13,13 @@ import me.nomi.urdutyper.domain.entity.Image
 import me.nomi.urdutyper.presentation.app.base.BaseFragment
 import me.nomi.urdutyper.presentation.ui.dashboard.viewmodel.SharedViewModel
 import me.nomi.urdutyper.presentation.utils.common.ImageMaker.getListOfImages
+import me.nomi.urdutyper.presentation.utils.extensions.common.toast
 import me.nomi.urdutyper.presentation.utils.extensions.views.launchAndRepeatWithViewLifecycle
 
 @AndroidEntryPoint
 class LocalViewPagerFragment : BaseFragment<FragmentViewpagerBinding>() {
     private val sharedViewModel: SharedViewModel by activityViewModels()
-    private lateinit var adapter: BottomSheetViewPagerAdapter
+    private lateinit var adapter: FragmentViewPagerAdapter
     override fun inflateViewBinding(inflater: LayoutInflater) =
         FragmentViewpagerBinding.inflate(layoutInflater)
 
@@ -33,19 +34,18 @@ class LocalViewPagerFragment : BaseFragment<FragmentViewpagerBinding>() {
     }
 
     private fun setViewPager() {
-        adapter = BottomSheetViewPagerAdapter()
+        adapter = FragmentViewPagerAdapter()
         adapter.apply {
             isCloud = false
             onDelete = {
                 sharedViewModel.shouldRefresh.value = true
-                if (adapter.isEmpty())
+                if (adapter.itemCount == 1)
                     findNavController().navigateUp()
             }
         }
         binding.viewPager.apply {
             adapter = this@LocalViewPagerFragment.adapter
         }
-
 
     }
 

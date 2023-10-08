@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.UrduTyper" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimary">@color/buttonPressed</item>
         <item name="colorPrimaryVariant">@color/background</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
@@ -13,6 +13,7 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <item name="android:windowFullscreen">false</item>
         <item name="windowActionBar">false</item>
+        <item name="android:windowBackground">@null</item>
         <item name="windowNoTitle">true</item>
 
         <!-- Customize your theme here. -->

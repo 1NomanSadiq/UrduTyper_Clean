@@ -5,5 +5,5 @@ import me.nomi.urdutyper.domain.repository.FirebaseRepository
 class LoadImages(
     private val firebaseRepository: FirebaseRepository
 ) {
-    suspend operator fun invoke(uid: String) = firebaseRepository.loadImages(uid = uid)
+    suspend operator fun invoke() = firebaseRepository.loadImages()
 }

@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.ListUpdateCallback
 import androidx.recyclerview.widget.RecyclerView
 
 abstract class BaseAdapter<T, B : ViewDataBinding>(
@@ -19,7 +20,7 @@ abstract class BaseAdapter<T, B : ViewDataBinding>(
 
     var onItemClickListener: ((Int) -> Unit)? = null
     var onLongItemClickListener: ((Int) -> Boolean)? = null
-    var onBottomReachedListener: (() -> Unit)? = null
+    var onBottomReachedListener: ((Boolean) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<B> {
         val inflater = LayoutInflater.from(parent.context)
@@ -49,10 +50,7 @@ abstract class BaseAdapter<T, B : ViewDataBinding>(
         }
 
         bind(holder.binding, getItem(position))
-
-        if (isBottom(holder)) {
-            onBottomReachedListener?.invoke()
-        }
+        onBottomReachedListener?.invoke(isBottom(holder))
     }
 
     override fun getItemCount() = getData().size

@@ -19,7 +19,6 @@ import java.util.Date
 import java.util.Locale
 
 object ImageMaker {
-    var pictureFile: File? = null
     private fun getBitmapFromView(view: View): Bitmap {
         val returnedBitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(returnedBitmap)
@@ -33,7 +32,7 @@ object ImageMaker {
         return returnedBitmap
     }
 
-    fun saveBitMap(context: Context, drawView: View): Uri? {
+    fun saveBitMap(context: Context, drawView: View): File? {
         val pictureFileDir = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
             "Nomiii"
@@ -46,11 +45,8 @@ object ImageMaker {
 
         val formatter = SimpleDateFormat("yyyyMMdd_hhmmss", Locale.getDefault())
         val now = Date()
-        val prefs = context.getSharedPreferences("login_data", Context.MODE_PRIVATE);
-        prefs.edit().putString("filename", "UT" + formatter.format(now)).apply()
-        val filename =
-            pictureFileDir.path + File.separator + prefs.getString("filename", "") + ".jpg"
-        pictureFile = File(filename)
+        val filename = "${pictureFileDir.path}${File.separator}UT${formatter.format(now)}.jpg"
+        val pictureFile = File(filename)
         val bitmap = getBitmapFromView(drawView)
         try {
             val oStream = FileOutputStream(pictureFile)
@@ -60,13 +56,9 @@ object ImageMaker {
             context.dialog("Saved: $filename").show()
         } catch (e: IOException) {
             e.printStackTrace()
-            context.dialog(e.localizedMessage?: "There was an error saving the image").show()
+            context.dialog(e.localizedMessage ?: "There was an error saving the image").show()
         }
-        return FileProvider.getUriForFile(
-            context,
-            context.applicationContext.packageName + ".provider",
-            pictureFile!!
-        )
+        return pictureFile
     }
 
     fun getListOfImages(context: Context): List<Image> {

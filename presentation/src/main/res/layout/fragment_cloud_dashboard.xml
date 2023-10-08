@@ -13,6 +13,7 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:layout_marginHorizontal="@dimen/_5sdp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/background"
@@ -35,6 +36,11 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recView"
+                    tools:listitem="@layout/singlerow"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:spanCount="2"
+                    android:clipToPadding="false"
+                    android:clipChildren="false"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 

@@ -18,6 +18,7 @@ import me.nomi.urdutyper.domain.usecase.LoadImages
 import me.nomi.urdutyper.domain.usecase.LoginUseCase
 import me.nomi.urdutyper.domain.usecase.Logout
 import me.nomi.urdutyper.domain.usecase.Register
+import me.nomi.urdutyper.domain.usecase.UploadImage
 import me.nomi.urdutyper.domain.usecase.UserData
 import me.nomi.urdutyper.domain.utils.dispatchers.DispatchersProviders
 import javax.inject.Singleton
@@ -67,4 +68,7 @@ class DataModule {
 
     @Provides
     fun deleteImage(firebaseRepository: FirebaseRepository) = DeleteImage(firebaseRepository)
+
+    @Provides
+    fun uploadImage(firebaseRepository: FirebaseRepository) = UploadImage(firebaseRepository)
 }

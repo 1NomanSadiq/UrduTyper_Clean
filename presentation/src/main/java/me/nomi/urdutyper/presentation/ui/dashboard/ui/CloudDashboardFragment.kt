@@ -21,6 +21,7 @@ import me.nomi.urdutyper.presentation.ui.dashboard.viewmodel.DashboardViewModel
 import me.nomi.urdutyper.presentation.ui.dashboard.viewmodel.SharedViewModel
 import me.nomi.urdutyper.presentation.utils.extensions.adapter.attach
 import me.nomi.urdutyper.presentation.utils.extensions.common.dialog
+import me.nomi.urdutyper.presentation.utils.extensions.common.toast
 import me.nomi.urdutyper.presentation.utils.extensions.views.launchAndRepeatWithViewLifecycle
 
 
@@ -29,20 +30,22 @@ class CloudDashboardFragment : BaseFragment<FragmentCloudDashboardBinding>(), Da
     private val viewModel: DashboardViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val adapter by lazy { DashboardAdapter() }
+    private var wentToNewImage = false
 
     override fun inflateViewBinding(inflater: LayoutInflater) =
         FragmentCloudDashboardBinding.inflate(inflater)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        init()
         setupViews()
         observeViewModel()
+        init()
     }
 
     private fun init() {
         binding.swipeRefresh.setOnRefreshListener {
             sharedViewModel.shouldRefresh.value = true
             binding.swipeRefresh.isRefreshing = false
+            sharedViewModel.shouldRefresh.value = false
         }
     }
 
@@ -53,11 +56,12 @@ class CloudDashboardFragment : BaseFragment<FragmentCloudDashboardBinding>(), Da
 
     private fun setupRecyclerView() {
         binding.recView.attach(
-            layoutManager = GridLayoutManager(requireActivity(), 3),
+            layoutManager = GridLayoutManager(requireActivity(), 2),
             adapter = adapter,
             onItemClick = { position, _ ->
                 viewModel.onImageClick(adapter.getData(), position)
-            }
+            },
+            isNestedScrollingEnabled = true
         )
     }
 
@@ -67,6 +71,7 @@ class CloudDashboardFragment : BaseFragment<FragmentCloudDashboardBinding>(), Da
                 viewModel.logout()
             }
             newImage.setOnClickListener {
+                wentToNewImage = true
                 createNew()
             }
         }
@@ -77,19 +82,26 @@ class CloudDashboardFragment : BaseFragment<FragmentCloudDashboardBinding>(), Da
             launch { uiState.collect { handleUiState(it) } }
             launch { navigationState.collect { handleNavigationState(it) } }
             launch { sharedViewModel.cloudImageList.collectLatest { showImages(it) } }
-            launch { sharedViewModel.shouldRefresh.collectLatest { refresh(it) } }
+            launch {
+                sharedViewModel.shouldRefresh.collectLatest { refresh(it) }
+            }
         }
     }
 
     private fun refresh(shouldRefresh: Boolean) {
-        if (shouldRefresh)
-            viewModel.loadImageList(prefs.uid)
+        if (shouldRefresh) {
+            viewModel.loadImageList()
+        }
     }
 
     private fun handleUiState(it: DashboardUiState) {
         when (it) {
             is DashboardUiState.Error -> showMessageDialog(it.message)
-            is DashboardUiState.ShowImages -> sharedViewModel.cloudImageList.value = it.images
+            is DashboardUiState.ShowImages -> {
+                sharedViewModel.cloudImageList.value = emptyList()
+                sharedViewModel.cloudImageList.value = it.images
+            }
+
             else -> {}
         }
     }
@@ -108,7 +120,6 @@ class CloudDashboardFragment : BaseFragment<FragmentCloudDashboardBinding>(), Da
     override fun showImages(images: List<Image>) {
         binding.noImage.isVisible = images.isEmpty()
         adapter.pushData(images)
-        sharedViewModel.shouldRefresh.value = false
     }
 
     override fun showMessageDialog(message: String) {
@@ -126,4 +137,10 @@ class CloudDashboardFragment : BaseFragment<FragmentCloudDashboardBinding>(), Da
 
     private fun createNew() =
         findNavController().navigate(DashboardFragmentDirections.toTypeActivity())
+
+    override fun onResume() {
+        super.onResume()
+        sharedViewModel.shouldRefresh.value = wentToNewImage
+        wentToNewImage = false
+    }
 }

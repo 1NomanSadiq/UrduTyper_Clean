@@ -4,58 +4,64 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import me.nomi.urdutyper.domain.entity.Image
+import me.nomi.urdutyper.domain.usecase.UploadImage
+import me.nomi.urdutyper.domain.utils.dispatchers.DispatchersProviders
+import me.nomi.urdutyper.domain.utils.onError
+import me.nomi.urdutyper.domain.utils.onSuccess
+import me.nomi.urdutyper.presentation.app.base.BaseViewModel
+import me.nomi.urdutyper.presentation.ui.dashboard.state.DashboardNavigationState
+import me.nomi.urdutyper.presentation.ui.dashboard.state.DashboardUiState
+import me.nomi.urdutyper.presentation.ui.type.state.TypeUiState
+import java.io.File
+import javax.inject.Inject
 
-class TypeViewModel : ViewModel() {
+@HiltViewModel
+class TypeViewModel  @Inject constructor(
+    private val uploadImage: UploadImage,
+    dispatchers: DispatchersProviders
+): BaseViewModel(dispatchers) {
+    private val _uiState = MutableStateFlow<TypeUiState>(TypeUiState.Init)
+    val uiState = _uiState.asStateFlow()
+
     val gradientOrientation: MutableStateFlow<GradientDrawable.Orientation> =
         MutableStateFlow(GradientDrawable.Orientation.TR_BL)
     val font: MutableStateFlow<Typeface?> = MutableStateFlow(null)
-    val fontNumber = MutableStateFlow(8)
-    val isBold = MutableStateFlow(false)
-    val isItalic = MutableStateFlow(false)
+    val typeface: MutableStateFlow<Int> = MutableStateFlow(0)
     val textColor = MutableStateFlow(Color.BLACK)
     val leftGradientColor = MutableStateFlow(-0xc0ae4b)
     val rightGradientColor = MutableStateFlow(-0xc0ae4b)
+    val background = MutableStateFlow(
+        GradientDrawable(
+            GradientDrawable.Orientation.TR_BL,
+            intArrayOf(-0xc0ae4b, -0xc0ae4b)
+        )
+    )
     val size = MutableStateFlow(50f)
-
-    fun setGradientOrientation(orientation: GradientDrawable.Orientation) {
-        gradientOrientation.value = orientation
-    }
-
-    fun setFont(font: Typeface?) {
-        this.font.value = font
-    }
-
-    fun setFontNumber(number: Int) {
-        fontNumber.value = number
-    }
-
-    fun setBold(bold: Boolean) {
-        isBold.value = bold
-    }
-
-    fun setItalic(italic: Boolean) {
-        isItalic.value = italic
-    }
-
-    fun setTextColor(color: Int) {
-        textColor.value = color
-    }
-
-    fun setLeftGradientColor(color: Int) {
-        leftGradientColor.value = color
-    }
+    val isBold = MutableStateFlow(false)
+    val isItalic = MutableStateFlow(false)
 
     fun setSolidColor(color: Int) {
         leftGradientColor.value = color
-        rightGradientColor.value = leftGradientColor.value
-    }
-
-    fun setRightGradientColor(color: Int) {
         rightGradientColor.value = color
     }
 
-    fun setSize(size: Float) {
-        this.size.value = size
+
+    fun uploadImage(file: File) = launchOnMainImmediate {
+        _uiState.update { TypeUiState.Loading }
+        uploadImage.invoke(file)
+            .onSuccess {
+                _uiState.update { TypeUiState.ImageUploaded }
+            }.onError { error ->
+                _uiState.update {
+                    TypeUiState.Error(
+                        error.message ?: "Failed to Upload"
+                    )
+                }
+            }
     }
 }

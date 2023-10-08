@@ -1,6 +1,7 @@
 package me.nomi.urdutyper.data.repository
 
 
+import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -12,6 +13,10 @@ import me.nomi.urdutyper.domain.entity.User
 import me.nomi.urdutyper.domain.repository.FirebaseRepository
 import me.nomi.urdutyper.domain.utils.Result
 import me.nomi.urdutyper.domain.utils.dispatchers.DispatchersProviders
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 class FirebaseRepositoryImpl @Inject constructor(
@@ -64,10 +69,10 @@ class FirebaseRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun loadImages(uid: String): Result<List<Image>> {
+    override suspend fun loadImages(): Result<List<Image>> {
         return safeApiCall {
             val images = mutableListOf<Image>()
-            val reference = firebaseDatabase.reference.child(uid).child("Images")
+            val reference = firebaseDatabase.reference.child(firebaseAuth.currentUser?.uid!!).child("Images")
             reference.keepSynced(true)
             val snapshot = reference.get().await()
             for (childSnapshot in snapshot.children) {
@@ -79,12 +84,25 @@ class FirebaseRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteImage(uid: String, file: Image): Result<Unit> {
+    override suspend fun deleteImage(file: Image): Result<Unit> {
         return safeApiCall {
-            firebaseDatabase.reference.child(uid).child("Images").child(file.name).removeValue()
-            val storageReference =
-                firebaseStorage.getReferenceFromUrl(file.url)
-            storageReference.delete()
+            firebaseDatabase.reference.child(firebaseAuth.currentUser?.uid!!).child("Images").child(file.name).removeValue()
+                .await()
+            firebaseStorage.getReferenceFromUrl(file.url).delete().await()
+        }
+    }
+
+    override suspend fun uploadImage(file: File): Result<Unit> {
+        return safeApiCall {
+            val filepath = "${firebaseAuth.currentUser?.uid}/Images/${file.name}"
+            val mountainImagesRef = firebaseStorage.reference.child(filepath)
+            mountainImagesRef.putFile(Uri.fromFile(file)).await()
+            val uri = mountainImagesRef.downloadUrl.await()
+            firebaseDatabase.reference.child(firebaseAuth.currentUser?.uid!!).child("Images").child(
+                "UT" + SimpleDateFormat("yyyyMMdd_hhmmss", Locale.getDefault()).format(
+                    Date()
+                )
+            ).setValue(uri.toString()).await()
         }
     }
 }

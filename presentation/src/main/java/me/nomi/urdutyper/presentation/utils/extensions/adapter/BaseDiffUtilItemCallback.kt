@@ -15,6 +15,7 @@ class BaseDiffUtilItemCallback<T>(
     private val areContentTheSame: ValueComparison<T> = DefaultValueComparison()
 ) : DiffUtil.ItemCallback<T>() {
 
+
     override fun areItemsTheSame(oldItem: T & Any, newItem: T & Any): Boolean {
         return areItemTheSame(oldItem, newItem)
     }

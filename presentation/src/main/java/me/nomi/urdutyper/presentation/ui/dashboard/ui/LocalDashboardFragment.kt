@@ -43,14 +43,16 @@ class LocalDashboardFragment : BaseFragment<FragmentLocalDashboardBinding>(), Da
         binding.swipeRefresh.setOnRefreshListener {
             sharedViewModel.shouldRefresh.value = true
             binding.swipeRefresh.isRefreshing = false
+            sharedViewModel.shouldRefresh.value = false
         }
         binding.recView.attach(
-            layoutManager = GridLayoutManager(requireActivity(), 3),
+            layoutManager = GridLayoutManager(requireActivity(), 2),
             adapter = adapter,
             onItemClick = { position, _ ->
                 sharedViewModel.position.value = position
                 goToViewPagerFragment()
-            }
+            },
+            isNestedScrollingEnabled = true
         )
     }
 
@@ -62,8 +64,10 @@ class LocalDashboardFragment : BaseFragment<FragmentLocalDashboardBinding>(), Da
     }
 
     private fun refresh(shouldRefresh: Boolean) {
-        if (shouldRefresh)
+        if (shouldRefresh) {
+            sharedViewModel.localImageList.value = emptyList()
             sharedViewModel.localImageList.value = getListOfImages(requireActivity())
+        }
     }
 
     override fun showImages(images: List<Image>) {

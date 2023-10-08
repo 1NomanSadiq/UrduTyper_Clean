@@ -1,10 +1,12 @@
 package me.nomi.urdutyper.presentation.utils.extensions.views
 
+import android.app.Activity
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
@@ -14,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import me.nomi.urdutyper.presentation.utils.extensions.common.inputMethodManager
 
 fun <T : View> T.afterMeasured(f: T.() -> Unit) {
     viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
@@ -83,3 +86,20 @@ inline fun Fragment.launchAndRepeatWithViewLifecycle(
         }
     }
 }
+
+fun Activity.hideKeyboard(view: View) {
+    if (inputMethodManager.isAcceptingText) {
+        inputMethodManager.hideSoftInputFromWindow(
+            view.windowToken,
+            0
+        )
+    }
+}
+
+fun Fragment.hideKeyboard(view: View) = requireActivity().hideKeyboard(view)
+
+fun Activity.showKeyboard(view: View) {
+    inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+}
+
+fun Fragment.showKeyboard(view: View) = requireActivity().showKeyboard(view)

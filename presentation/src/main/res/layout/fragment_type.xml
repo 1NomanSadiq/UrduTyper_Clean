@@ -24,6 +24,8 @@
             android:fontFamily="@font/jameel_noori_nastaleeq"
             android:gravity="center"
             android:hint="یہاں لکھیں"
+            android:clickable="true"
+            android:focusable="true"
             android:paddingHorizontal="15dp"
             android:textColor="@color/black"
             android:textColorHint="#70000000"

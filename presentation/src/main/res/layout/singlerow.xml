@@ -1,37 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
     </data>
 
-    <LinearLayout
-        android:layout_marginHorizontal="@dimen/_5sdp"
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
+        app:cardBackgroundColor="@color/black"
+        app:cardCornerRadius="@dimen/_3sdp"
+        android:elevation="@dimen/_3sdp"
+        android:layout_margin="@dimen/_3sdp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:orientation="vertical">
 
         <ImageView
+            android:layout_margin="0.5dp"
             android:id="@+id/imageView"
-            android:layout_width="125dp"
-            android:layout_height="125dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="20dp"
-            android:focusableInTouchMode="false" />
-
-        <TextView
-            android:id="@+id/textView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:focusableInTouchMode="false"
-            android:gravity="center_horizontal"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:text="Loading..."
-            android:textColor="@color/white" />
-
-
-    </LinearLayout>
+            android:layout_height="@dimen/_200sdp"
+            android:layout_gravity="center_horizontal"
+            android:scaleType="centerCrop"
+            android:src="@drawable/not_found" />
+    </com.google.android.material.card.MaterialCardView>
 </layout>

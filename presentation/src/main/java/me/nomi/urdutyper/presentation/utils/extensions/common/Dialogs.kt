@@ -5,19 +5,26 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.TimePickerDialog
 import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.text.format.DateFormat
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 import android.view.Window
+import android.view.WindowManager
+import android.widget.ProgressBar
+import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import me.nomi.urdutyper.R
 import me.nomi.urdutyper.databinding.AlertDialogeDesignBinding
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+
 
 fun Fragment.newDialog(
     message: String,
@@ -212,7 +219,7 @@ class DialogBuilder(private val ctx: Context) {
             isNegativeSet = false
             binding.positive.text = "OK"
             binding.negative.text = "Cancel"
-            binding.positive.setOnClickListener {dismiss()}
+            binding.positive.setOnClickListener { dismiss() }
             binding.negative.setOnClickListener { dismiss() }
             onPositiveClick()
         }
@@ -224,7 +231,7 @@ class DialogBuilder(private val ctx: Context) {
         binding.positive.setOnClickListener {
             binding.positive.text = "OK"
             binding.negative.text = "Cancel"
-            binding.positive.setOnClickListener {dismiss()}
+            binding.positive.setOnClickListener { dismiss() }
             binding.negative.setOnClickListener { dismiss() }
             isNegativeSet = false
             onPositiveClick()
@@ -240,7 +247,7 @@ class DialogBuilder(private val ctx: Context) {
         binding.negative.setOnClickListener {
             binding.positive.text = "OK"
             binding.negative.text = "Cancel"
-            binding.positive.setOnClickListener {dismiss()}
+            binding.positive.setOnClickListener { dismiss() }
             binding.negative.setOnClickListener { dismiss() }
             isNegativeSet = false
             onNegativeClick()
@@ -253,7 +260,7 @@ class DialogBuilder(private val ctx: Context) {
         binding.negative.setOnClickListener {
             binding.positive.text = "OK"
             binding.negative.text = "Cancel"
-            binding.positive.setOnClickListener {dismiss()}
+            binding.positive.setOnClickListener { dismiss() }
             binding.negative.setOnClickListener { dismiss() }
             isNegativeSet = false
             onNegativeClick()
@@ -344,6 +351,105 @@ class TimePickerDialogBuilder(private val ctx: Context) {
                 onTimeSelected?.invoke(time!!)
             }, hour, minute, false)
         timePickerDialog.show()
+    }
+}
+
+
+fun Fragment.progressDialog(
+    init: (ProgressDialogBuilder.() -> Unit)? = null
+) = requireActivity().progressDialog(init)
+
+fun Context.progressDialog(
+    init: (ProgressDialogBuilder.() -> Unit)? = null
+) = ProgressDialogBuilder.getInstance(this).apply {
+    if (init != null) init()
+}
+
+fun Fragment.showProgressDialog() = requireActivity().showProgressDialog()
+fun Fragment.dismissProgressDialog() = requireActivity().dismissProgressDialog()
+
+fun Context.showProgressDialog() = ProgressDialogBuilder.getInstance(this).show()
+fun Context.dismissProgressDialog() = ProgressDialogBuilder.getInstance(this).dismiss()
+
+class ProgressDialogBuilder(private val context: Context) {
+
+    companion object {
+        /***
+        the ProgressDialogBuilder instance stored in the dialog property can be garbage collected
+        when it is no longer needed because it is only being referenced by the dialog property,
+        which can be set to null or to a new ProgressDialogBuilder instance. We are not keeping
+        the context in our custom object.
+         */
+        @SuppressLint("StaticFieldLeak")
+        private var progressDialog: ProgressDialogBuilder? = null
+        fun getInstance(context: Context): ProgressDialogBuilder {
+            return if (progressDialog?.context == context) {
+                progressDialog!!
+            } else {
+                synchronized(this) {
+                    ProgressDialogBuilder(context).also { progressDialog = it }
+                }
+            }
+        }
+    }
+
+    private val progressDialog: Dialog
+    val relativeLayout = RelativeLayout(context).apply {
+        layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+    }
+
+    val view = View(context).apply {
+        id = View.generateViewId()
+        layoutParams = RelativeLayout.LayoutParams(
+            RelativeLayout.LayoutParams.MATCH_PARENT,
+            RelativeLayout.LayoutParams.MATCH_PARENT
+        )
+        alpha = 0.4f
+        setBackgroundColor(Color.parseColor("#707070"))
+    }
+
+    val progressBar = ProgressBar(context, null, android.R.attr.progressBarStyleLarge).apply {
+        id = View.generateViewId()
+        val sizeInDp =
+            (resources.getDimension(com.intuit.sdp.R.dimen._40sdp) / resources.displayMetrics.density)
+        val sizeInPx = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            sizeInDp,
+            resources.displayMetrics
+        ).toInt()
+        layoutParams = RelativeLayout.LayoutParams(sizeInPx, sizeInPx).apply {
+            addRule(RelativeLayout.CENTER_IN_PARENT)
+        }
+    }
+
+    init {
+        relativeLayout.addView(view)
+        relativeLayout.addView(progressBar)
+
+        progressDialog = Dialog(context, android.R.style.Theme_Translucent_NoTitleBar)
+        progressDialog.setContentView(relativeLayout)
+        progressDialog.setCancelable(false)
+        progressDialog.window?.setFlags(
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+        )
+    }
+
+    fun dismiss() {
+        if (progressDialog.isShowing)
+            progressDialog.dismiss()
+    }
+
+    fun show() {
+        if (!progressDialog.isShowing)
+            progressDialog.show()
+    }
+
+    fun cancellable(value: Boolean = true) {
+        progressDialog.setCancelable(value)
     }
 }
 

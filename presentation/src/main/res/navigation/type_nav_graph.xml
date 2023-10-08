@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/splash_nav_graph"
+    app:startDestination="@id/type_fragment">
+
+
+    <fragment
+        android:id="@+id/type_fragment"
+        android:name="me.nomi.urdutyper.presentation.ui.type.ui.TypeFragment"
+        android:label="Type"
+        tools:layout="@layout/fragment_type">
+
+        <action
+            android:id="@+id/to_fontsFragment"
+            app:destination="@id/fonts_fragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/fonts_fragment"
+        android:name="me.nomi.urdutyper.presentation.ui.type.ui.FontsFragment"
+        tools:layout="@layout/fragment_fonts" />
+
+</navigation>

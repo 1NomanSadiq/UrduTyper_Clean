@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import me.nomi.urdutyper.domain.entity.Image
-import me.nomi.urdutyper.domain.repository.SharedPreferenceRepository
 import me.nomi.urdutyper.domain.usecase.DeleteImage
 import me.nomi.urdutyper.domain.usecase.LoadImages
 import me.nomi.urdutyper.domain.usecase.Logout
@@ -21,7 +20,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    prefs: SharedPreferenceRepository,
     private val loadImages: LoadImages,
     private val logout: Logout,
     private val deleteImage: DeleteImage,
@@ -36,13 +34,13 @@ class DashboardViewModel @Inject constructor(
     val navigationState = _navigationState.asSharedFlow()
 
     init {
-        loadImageList(prefs.uid)
+        loadImageList()
     }
 
 
-    fun loadImageList(uid: String) = launchOnMainImmediate {
+    fun loadImageList() = launchOnMainImmediate {
         _uiState.update { DashboardUiState.Loading }
-        loadImages(uid)
+        loadImages()
             .onSuccess { images ->
                     _uiState.update { DashboardUiState.ShowImages(images) }
             }.onError { error ->
@@ -68,15 +66,15 @@ class DashboardViewModel @Inject constructor(
             }
     }
 
-    fun deleteImage(uid: String, file: Image) = launchOnMainImmediate {
+    fun deleteImage(file: Image) = launchOnMainImmediate {
         _uiState.update { DashboardUiState.Loading }
-        deleteImage.invoke(uid, file)
+        deleteImage.invoke(file)
             .onSuccess {
                 _navigationState.emit(DashboardNavigationState.ImageDeleted(file))
             }.onError { error ->
                 _uiState.update {
                     DashboardUiState.Error(
-                        error.message ?: "Failed to logout"
+                        error.message ?: "Failed to Delete"
                     )
                 }
             }
