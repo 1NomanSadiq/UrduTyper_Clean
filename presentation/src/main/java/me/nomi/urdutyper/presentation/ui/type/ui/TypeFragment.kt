@@ -17,13 +17,11 @@ import android.widget.SeekBar
 import androidx.activity.addCallback
 import androidx.core.content.FileProvider
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -33,13 +31,12 @@ import me.nomi.urdutyper.databinding.ColorPickDialogBinding
 import me.nomi.urdutyper.databinding.FontStyleDialogBinding
 import me.nomi.urdutyper.databinding.FragmentTypeBinding
 import me.nomi.urdutyper.presentation.app.base.BaseFragment
-import me.nomi.urdutyper.presentation.ui.type.state.TypeUiState
+import me.nomi.urdutyper.presentation.ui.dashboard.viewmodel.SharedViewModel
 import me.nomi.urdutyper.presentation.ui.type.viewmodel.TypeViewModel
 import me.nomi.urdutyper.presentation.utils.common.ImageMaker
 import me.nomi.urdutyper.presentation.utils.common.MultiTouchListener
 import me.nomi.urdutyper.presentation.utils.common.Notification
 import me.nomi.urdutyper.presentation.utils.extensions.common.dialog
-import me.nomi.urdutyper.presentation.utils.extensions.common.showProgressDialog
 import me.nomi.urdutyper.presentation.utils.extensions.views.hideKeyboard
 import me.nomi.urdutyper.presentation.utils.extensions.views.launchAndRepeatWithViewLifecycle
 import me.nomi.urdutyper.presentation.utils.extensions.views.showKeyboard
@@ -60,7 +57,6 @@ class TypeFragment : BaseFragment<FragmentTypeBinding>() {
         binding.edittext2.setOnTouchListener(MultiTouchListener(requireActivity()))
 
         launchAndRepeatWithViewLifecycle {
-            launch { viewModel.uiState.collectLatest { handleUiState(it) } }
             launch { viewModel.gradientOrientation.collectLatest { setGradientBackground() } }
             launch { viewModel.leftGradientColor.collectLatest { setGradientBackground() } }
             launch { viewModel.rightGradientColor.collectLatest { setGradientBackground() } }
@@ -286,17 +282,6 @@ class TypeFragment : BaseFragment<FragmentTypeBinding>() {
                 isEnabled = false
                 activity?.onBackPressed()
             }
-        }
-    }
-
-    private fun handleUiState(state: TypeUiState) {
-        when (state) {
-            is TypeUiState.Loading -> Snackbar.make(binding.root2, "Uploading your file", Snackbar.LENGTH_LONG)
-                .show()
-            is TypeUiState.Error -> dialog(state.message).show()
-            is TypeUiState.ImageUploaded -> Snackbar.make(binding.root2, "Successfully Uploaded", Snackbar.LENGTH_LONG)
-                .show()
-            else -> {}
         }
     }
 

@@ -16,8 +16,8 @@
             app:destination="@id/onboarding_activity" />
 
         <action
-            android:id="@+id/to_typeActivity"
-            app:destination="@id/type_activity" />
+            android:id="@+id/to_typeFragment"
+            app:destination="@id/type_fragment" />
 
         <action
             android:id="@+id/to_localViewPagerFragment"
@@ -41,10 +41,22 @@
         tools:layout="@layout/fragment_viewpager">
     </fragment>
 
-    <activity
-        android:id="@+id/type_activity"
-        android:name="me.nomi.urdutyper.presentation.ui.type.ui.TypeActivity"
-        tools:layout="@layout/activity_online" />
+    <fragment
+        android:id="@+id/type_fragment"
+        android:name="me.nomi.urdutyper.presentation.ui.type.ui.TypeFragment"
+        android:label="Type"
+        tools:layout="@layout/fragment_type">
+
+        <action
+            android:id="@+id/to_fontsFragment"
+            app:destination="@id/fonts_fragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/fonts_fragment"
+        android:name="me.nomi.urdutyper.presentation.ui.type.ui.FontsFragment"
+        tools:layout="@layout/fragment_fonts" />
 
     <activity
         android:id="@+id/onboarding_activity"

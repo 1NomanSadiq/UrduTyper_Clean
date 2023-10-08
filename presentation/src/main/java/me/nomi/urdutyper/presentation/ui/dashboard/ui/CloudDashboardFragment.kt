@@ -30,7 +30,6 @@ class CloudDashboardFragment : BaseFragment<FragmentCloudDashboardBinding>(), Da
     private val viewModel: DashboardViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val adapter by lazy { DashboardAdapter() }
-    private var wentToNewImage = false
 
     override fun inflateViewBinding(inflater: LayoutInflater) =
         FragmentCloudDashboardBinding.inflate(inflater)
@@ -71,7 +70,6 @@ class CloudDashboardFragment : BaseFragment<FragmentCloudDashboardBinding>(), Da
                 viewModel.logout()
             }
             newImage.setOnClickListener {
-                wentToNewImage = true
                 createNew()
             }
         }
@@ -119,6 +117,7 @@ class CloudDashboardFragment : BaseFragment<FragmentCloudDashboardBinding>(), Da
 
     override fun showImages(images: List<Image>) {
         binding.noImage.isVisible = images.isEmpty()
+        adapter.pushData(emptyList())
         adapter.pushData(images)
     }
 
@@ -136,11 +135,5 @@ class CloudDashboardFragment : BaseFragment<FragmentCloudDashboardBinding>(), Da
     }
 
     private fun createNew() =
-        findNavController().navigate(DashboardFragmentDirections.toTypeActivity())
-
-    override fun onResume() {
-        super.onResume()
-        sharedViewModel.shouldRefresh.value = wentToNewImage
-        wentToNewImage = false
-    }
+        findNavController().navigate(DashboardFragmentDirections.toTypeFragment())
 }
