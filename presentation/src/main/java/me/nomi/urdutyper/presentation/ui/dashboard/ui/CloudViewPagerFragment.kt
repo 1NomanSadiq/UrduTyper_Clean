@@ -56,7 +56,7 @@ class CloudViewPagerFragment : BaseFragment<FragmentViewpagerBinding>() {
         when (state) {
             is DashboardNavigationState.ImageDeleted -> {
                 sharedViewModel.shouldRefresh.value = true
-                adapter.notifyItemRemoved(adapter.getItemPosition(state.image))
+                adapter.removeItem(state.image)
                 if (adapter.isEmpty())
                     findNavController().navigateUp()
             }

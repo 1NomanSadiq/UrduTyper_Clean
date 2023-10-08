@@ -4,79 +4,58 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class TypeViewModel : ViewModel() {
-    private val _gradientOrientation: MutableStateFlow<GradientDrawable.Orientation> =
+    val gradientOrientation: MutableStateFlow<GradientDrawable.Orientation> =
         MutableStateFlow(GradientDrawable.Orientation.TR_BL)
-    private val _font: MutableStateFlow<Typeface?> = MutableStateFlow(null)
-    private val _fontNumber = MutableStateFlow(8)
-    private val _isBold = MutableStateFlow(false)
-    private val _isItalic = MutableStateFlow(false)
-    private val _textColor = MutableStateFlow(Color.BLACK)
-    private val _leftGradientColor = MutableStateFlow(-0xc0ae4b)
-    private val _rightGradientColor = MutableStateFlow(-0xc0ae4b)
-    private val _size = MutableStateFlow(50f)
-
-    val gradientOrientation: Flow<GradientDrawable.Orientation> = _gradientOrientation
-    val font: Flow<Typeface?> = _font
-    val fontNumber: Flow<Int> = _fontNumber
-    val isBold: Flow<Boolean> = _isBold
-    val isItalic: Flow<Boolean> = _isItalic
-    val textColor: Flow<Int> = _textColor
-    val leftGradientColor: Flow<Int> = _leftGradientColor
-    val rightGradientColor: Flow<Int> = _rightGradientColor
-    val size: Flow<Float> = _size
-
-    val currentGradientOrientation get() = _gradientOrientation.value
-    val currentFont  get() = _font.value
-    val currentFontNumber get() = _fontNumber.value
-    val isCurrentlyBold get() = _isBold.value
-    val isCurrentlyItalic get() = _isItalic.value
-    val currentTextColor get() = _textColor.value
-    val currentLeftGradientColor get() = _leftGradientColor.value
-    val currentRightGradientColor get() = _rightGradientColor.value
-    val currentSize get() = _size.value
+    val font: MutableStateFlow<Typeface?> = MutableStateFlow(null)
+    val fontNumber = MutableStateFlow(8)
+    val isBold = MutableStateFlow(false)
+    val isItalic = MutableStateFlow(false)
+    val textColor = MutableStateFlow(Color.BLACK)
+    val leftGradientColor = MutableStateFlow(-0xc0ae4b)
+    val rightGradientColor = MutableStateFlow(-0xc0ae4b)
+    val size = MutableStateFlow(50f)
 
     fun setGradientOrientation(orientation: GradientDrawable.Orientation) {
-        _gradientOrientation.value = orientation
+        gradientOrientation.value = orientation
     }
 
     fun setFont(font: Typeface?) {
-        _font.value = font
+        this.font.value = font
     }
 
     fun setFontNumber(number: Int) {
-        _fontNumber.value = number
+        fontNumber.value = number
     }
 
     fun setBold(bold: Boolean) {
-        _isBold.value = bold
+        isBold.value = bold
     }
 
     fun setItalic(italic: Boolean) {
-        _isItalic.value = italic
+        isItalic.value = italic
     }
 
     fun setTextColor(color: Int) {
-        _textColor.value = color
+        textColor.value = color
     }
 
     fun setLeftGradientColor(color: Int) {
-        _leftGradientColor.value = color
+        leftGradientColor.value = color
     }
 
     fun setSolidColor(color: Int) {
-        _leftGradientColor.value = color
-        _rightGradientColor.value = _leftGradientColor.value
+        leftGradientColor.value = color
+        rightGradientColor.value = leftGradientColor.value
     }
 
     fun setRightGradientColor(color: Int) {
-        _rightGradientColor.value = color
+        rightGradientColor.value = color
     }
 
     fun setSize(size: Float) {
-        _size.value = size
+        this.size.value = size
     }
 }

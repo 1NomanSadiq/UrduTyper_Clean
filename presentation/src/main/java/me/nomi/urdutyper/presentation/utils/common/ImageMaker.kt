@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Environment
 import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.core.content.FileProvider
 import me.nomi.urdutyper.domain.entity.Image
 import me.nomi.urdutyper.presentation.utils.extensions.common.dialog
@@ -41,11 +40,7 @@ object ImageMaker {
         )
         if (!pictureFileDir.exists()) {
             val isDirectoryCreated = pictureFileDir.mkdirs()
-            if (!isDirectoryCreated) Toast.makeText(
-                context,
-                "Failed to create the directory!",
-                Toast.LENGTH_LONG
-            ).show()
+            if (!isDirectoryCreated) context.dialog("Failed to create the directory!").show()
             return null
         }
 
@@ -62,10 +57,10 @@ object ImageMaker {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, oStream)
             oStream.flush()
             oStream.close()
-            Toast.makeText(context, "Saved: $filename", Toast.LENGTH_LONG).show()
+            context.dialog("Saved: $filename").show()
         } catch (e: IOException) {
             e.printStackTrace()
-            Toast.makeText(context, "There was an error saving the image", Toast.LENGTH_LONG).show()
+            context.dialog(e.localizedMessage?: "There was an error saving the image").show()
         }
         return FileProvider.getUriForFile(
             context,
@@ -126,11 +121,7 @@ object ImageMaker {
         )
         if (!dir.exists()) {
             val isDirectoryCreated = dir.mkdirs()
-            if (!isDirectoryCreated) Toast.makeText(
-                context,
-                "Failed to create the directory!",
-                Toast.LENGTH_LONG
-            ).show()
+            if (!isDirectoryCreated) context.dialog("Failed to create the directory!").show()
             return null
         }
         val outFile = File(dir.path + File.separator + filename + ".jpg")

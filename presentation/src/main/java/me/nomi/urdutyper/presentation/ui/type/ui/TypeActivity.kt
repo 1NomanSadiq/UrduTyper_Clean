@@ -128,7 +128,7 @@ class TypeActivity : AppCompatActivity() {
                 (dialogBinding as BackgroundColorDialogBinding).apply {
                     orientation.setOnClickListener {
                         viewModel.setGradientOrientation(
-                            when (viewModel.currentGradientOrientation) {
+                            when (viewModel.gradientOrientation.value) {
                                 GradientDrawable.Orientation.TR_BL -> GradientDrawable.Orientation.TOP_BOTTOM
                                 GradientDrawable.Orientation.TOP_BOTTOM -> GradientDrawable.Orientation.TL_BR
                                 GradientDrawable.Orientation.TL_BR -> GradientDrawable.Orientation.LEFT_RIGHT
@@ -196,12 +196,13 @@ class TypeActivity : AppCompatActivity() {
                             else -> {
                                 binding.edittext2.setTypeface(
                                     null,
-                                    Typeface.NORMAL)
-                                var fontNumber = if (viewModel.currentFontNumber == fonts.size - 1) 0
-                                else viewModel.currentFontNumber + 1
+                                    Typeface.NORMAL
+                                )
+                                var fontNumber = if (viewModel.fontNumber.value == fonts.size - 1) 0
+                                else viewModel.fontNumber.value + 1
                                 viewModel.setFontNumber(fontNumber)
-                                fontNumber = if (viewModel.currentFontNumber == 0) fonts.size -1
-                                else viewModel.currentFontNumber - 1
+                                fontNumber = if (viewModel.fontNumber.value == 0) fonts.size - 1
+                                else viewModel.fontNumber.value - 1
                                 viewModel.setFontNumber(fontNumber)
                                 Typeface.NORMAL
                             }
@@ -217,12 +218,13 @@ class TypeActivity : AppCompatActivity() {
                             else -> {
                                 binding.edittext2.setTypeface(
                                     null,
-                                    Typeface.NORMAL)
-                                var fontNumber = if (viewModel.currentFontNumber == fonts.size - 1) 0
-                                else viewModel.currentFontNumber + 1
+                                    Typeface.NORMAL
+                                )
+                                var fontNumber = if (viewModel.fontNumber.value == fonts.size - 1) 0
+                                else viewModel.fontNumber.value + 1
                                 viewModel.setFontNumber(fontNumber)
-                                fontNumber = if (viewModel.currentFontNumber == 0) fonts.size -1
-                                else viewModel.currentFontNumber - 1
+                                fontNumber = if (viewModel.fontNumber.value == 0) fonts.size - 1
+                                else viewModel.fontNumber.value - 1
                                 viewModel.setFontNumber(fontNumber)
                                 Typeface.NORMAL
                             }
@@ -230,21 +232,21 @@ class TypeActivity : AppCompatActivity() {
                         binding.edittext2.setTypeface(binding.edittext2.typeface, typeface)
                     }
 
-                    fontSize.progress = viewModel.currentSize.toInt() - 20
+                    fontSize.progress = viewModel.size.value.toInt() - 20
                     alignLeft.setOnClickListener {
                         binding.edittext2.textAlignment = View.TEXT_ALIGNMENT_VIEW_START
-                        binding.edittext2.textSize = viewModel.currentSize + 1
-                        binding.edittext2.textSize = viewModel.currentSize - 1
+                        binding.edittext2.textSize = viewModel.size.value + 1
+                        binding.edittext2.textSize = viewModel.size.value - 1
                     }
                     alignRight.setOnClickListener {
                         binding.edittext2.textAlignment = View.TEXT_ALIGNMENT_VIEW_END
-                        binding.edittext2.textSize = viewModel.currentSize + 1
-                        binding.edittext2.textSize = viewModel.currentSize - 1
+                        binding.edittext2.textSize = viewModel.size.value + 1
+                        binding.edittext2.textSize = viewModel.size.value - 1
                     }
                     alignCenter.setOnClickListener {
                         binding.edittext2.textAlignment = View.TEXT_ALIGNMENT_CENTER
-                        binding.edittext2.textSize = viewModel.currentSize + 1
-                        binding.edittext2.textSize = viewModel.currentSize - 1
+                        binding.edittext2.textSize = viewModel.size.value + 1
+                        binding.edittext2.textSize = viewModel.size.value - 1
                     }
                     autoTextColor.setOnClickListener {
                         val color =
@@ -263,8 +265,8 @@ class TypeActivity : AppCompatActivity() {
                     textColor.setOnClickListener { showTextColorPickDialog() }
 
                     myFont.setOnClickListener {
-                        val fontNumber = if (viewModel.currentFontNumber == fonts.size - 1) 0
-                        else viewModel.currentFontNumber + 1
+                        val fontNumber = if (viewModel.fontNumber.value == fonts.size - 1) 0
+                        else viewModel.fontNumber.value + 1
                         viewModel.setFontNumber(fontNumber)
 
                     }
@@ -323,7 +325,7 @@ class TypeActivity : AppCompatActivity() {
 
     private fun showSolidBackgroundColorPickDialog() {
         showColorPickDialog(
-            viewModel.currentLeftGradientColor
+            viewModel.leftGradientColor.value
         ) { selectedColor ->
             viewModel.setLeftGradientColor(selectedColor)
             viewModel.setRightGradientColor(selectedColor)
@@ -333,7 +335,7 @@ class TypeActivity : AppCompatActivity() {
 
     private fun showGradientBackgroundColorPickDialog(isLeft: Boolean) {
         showColorPickDialog(
-            if (isLeft) viewModel.currentLeftGradientColor else viewModel.currentRightGradientColor
+            if (isLeft) viewModel.leftGradientColor.value else viewModel.rightGradientColor.value
         ) { selectedColor ->
             if (isLeft) {
                 viewModel.setLeftGradientColor(selectedColor)
@@ -343,12 +345,12 @@ class TypeActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun setGradientBackground() {
+    private fun setGradientBackground() {
         val gd = GradientDrawable(
-            viewModel.gradientOrientation.last(),
+            viewModel.gradientOrientation.value,
             intArrayOf(
-                viewModel.leftGradientColor.last(),
-                viewModel.rightGradientColor.last()
+                viewModel.leftGradientColor.value,
+                viewModel.rightGradientColor.value
             )
         )
         binding.root2.background = gd
@@ -369,13 +371,13 @@ class TypeActivity : AppCompatActivity() {
     }
 
     private fun saveAndUploadFileOnline(): Uri? {
+        val path = saveBitMap(this, binding.root2)
         val uid = FirebaseAuth.getInstance().currentUser!!.uid
         val prefs = getSharedPreferences("login_data", MODE_PRIVATE)
         val filepath = uid + "/Images/" + prefs.getString("filename", "") + ".jpg"
         val firebaseStorage = FirebaseStorage.getInstance()
         val storageReference = firebaseStorage.reference
         val ref = FirebaseDatabase.getInstance().reference.child(uid).child("Images")
-        val path = saveBitMap(this, binding.root2)
         val mountainImagesRef = storageReference.child(filepath)
         if (path != null) {
             mountainImagesRef.putFile(path)
