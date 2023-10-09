@@ -62,6 +62,6 @@ object Fonts {
             }
         }
 
-        return fonts
+        return fonts.toSet().toList()
     }
 }
