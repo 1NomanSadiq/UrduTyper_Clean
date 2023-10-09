@@ -15,9 +15,11 @@ import me.nomi.urdutyper.domain.repository.FirebaseRepository
 import me.nomi.urdutyper.domain.repository.SharedPreferenceRepository
 import me.nomi.urdutyper.domain.usecase.DeleteImage
 import me.nomi.urdutyper.domain.usecase.LoadImages
-import me.nomi.urdutyper.domain.usecase.LoginUseCase
+import me.nomi.urdutyper.domain.usecase.Login
+import me.nomi.urdutyper.domain.usecase.LoginWithGoogle
 import me.nomi.urdutyper.domain.usecase.Logout
 import me.nomi.urdutyper.domain.usecase.Register
+import me.nomi.urdutyper.domain.usecase.ResetPassword
 import me.nomi.urdutyper.domain.usecase.UploadImage
 import me.nomi.urdutyper.domain.usecase.UserData
 import me.nomi.urdutyper.domain.utils.dispatchers.DispatchersProviders
@@ -48,8 +50,11 @@ class DataModule {
         SharedPreference(context)
 
     @Provides
-    fun provideLogin(firebaseRepository: FirebaseRepository): LoginUseCase =
-        LoginUseCase(firebaseRepository)
+    fun provideLogin(firebaseRepository: FirebaseRepository): Login =
+        Login(firebaseRepository)
+    @Provides
+    fun provideLoginWithGoogle(firebaseRepository: FirebaseRepository): LoginWithGoogle =
+        LoginWithGoogle(firebaseRepository)
 
     @Provides
     fun provideLogout(firebaseRepository: FirebaseRepository): Logout =
@@ -64,11 +69,14 @@ class DataModule {
         UserData(firebaseRepository)
 
     @Provides
-    fun loadImages(firebaseRepository: FirebaseRepository) = LoadImages(firebaseRepository)
+    fun provideLoadImages(firebaseRepository: FirebaseRepository) = LoadImages(firebaseRepository)
 
     @Provides
-    fun deleteImage(firebaseRepository: FirebaseRepository) = DeleteImage(firebaseRepository)
+    fun provideDeleteImage(firebaseRepository: FirebaseRepository) = DeleteImage(firebaseRepository)
 
     @Provides
-    fun uploadImage(firebaseRepository: FirebaseRepository) = UploadImage(firebaseRepository)
+    fun provideUploadImage(firebaseRepository: FirebaseRepository) = UploadImage(firebaseRepository)
+
+    @Provides
+    fun provideResetPassword(firebaseRepository: FirebaseRepository) = ResetPassword(firebaseRepository)
 }

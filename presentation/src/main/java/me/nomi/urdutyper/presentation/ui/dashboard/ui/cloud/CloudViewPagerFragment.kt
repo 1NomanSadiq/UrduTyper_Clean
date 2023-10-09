@@ -1,4 +1,4 @@
-package me.nomi.urdutyper.presentation.ui.dashboard.ui
+package me.nomi.urdutyper.presentation.ui.dashboard.ui.cloud
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,8 +14,9 @@ import me.nomi.urdutyper.domain.entity.Image
 import me.nomi.urdutyper.presentation.app.base.BaseFragment
 import me.nomi.urdutyper.presentation.ui.dashboard.state.DashboardNavigationState
 import me.nomi.urdutyper.presentation.ui.dashboard.state.DashboardUiState
+import me.nomi.urdutyper.presentation.ui.dashboard.ui.main.FragmentViewPagerAdapter
 import me.nomi.urdutyper.presentation.ui.dashboard.viewmodel.DashboardViewModel
-import me.nomi.urdutyper.presentation.ui.dashboard.viewmodel.SharedViewModel
+import me.nomi.urdutyper.presentation.sharedviewmodel.SharedViewModel
 import me.nomi.urdutyper.presentation.utils.extensions.common.dialog
 import me.nomi.urdutyper.presentation.utils.extensions.common.dismissProgressDialog
 import me.nomi.urdutyper.presentation.utils.extensions.common.showProgressDialog

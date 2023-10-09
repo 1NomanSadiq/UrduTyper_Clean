@@ -23,23 +23,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:background="@color/background"/>
+                android:background="@color/background" />
 
             <ImageView
-                app:tint="@color/white"
-                android:id="@+id/delete"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/ic_baseline_delete_24" />
-
-            <ImageView
-                app:tint="@color/white"
-                android:id="@+id/saveBigImages"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:id="@+id/popup_menu"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_alignParentEnd="true"
                 android:layout_gravity="end"
-                android:src="@drawable/save_jpg" />
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:shadowColor="@color/black"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="2"
+                android:src="@drawable/menu_dots"
+                app:tint="@color/white" />
         </RelativeLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,11 +14,19 @@
 
         <action
             android:id="@+id/to_signUpFragment"
-            app:destination="@id/signUpFragment" />
+            app:destination="@id/signUpFragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out" />
 
         <action
             android:id="@+id/to_DashboardActivity"
-            app:destination="@id/dashboard_activity"/>
+            app:destination="@id/dashboard_activity"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out" />
 
     </fragment>
 
@@ -32,7 +40,7 @@
 
     <activity
         android:id="@+id/dashboard_activity"
-        tools:layout="@layout/activity_dashboard"
-        android:name="me.nomi.urdutyper.presentation.ui.dashboard.ui.DashboardActivity" />
+        android:name="me.nomi.urdutyper.presentation.ui.dashboard.ui.main.DashboardActivity"
+        tools:layout="@layout/activity_dashboard" />
 
 </navigation>

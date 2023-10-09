@@ -1,4 +1,4 @@
-package me.nomi.urdutyper.presentation.ui.dashboard.ui
+package me.nomi.urdutyper.presentation.ui.dashboard.ui.local
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,8 +13,10 @@ import kotlinx.coroutines.launch
 import me.nomi.urdutyper.databinding.FragmentLocalDashboardBinding
 import me.nomi.urdutyper.domain.entity.Image
 import me.nomi.urdutyper.presentation.app.base.BaseFragment
+import me.nomi.urdutyper.presentation.sharedviewmodel.SharedViewModel
+import me.nomi.urdutyper.presentation.ui.dashboard.ui.main.DashboardAdapter
+import me.nomi.urdutyper.presentation.ui.dashboard.ui.main.DashboardFragmentDirections
 import me.nomi.urdutyper.presentation.ui.dashboard.view.DashboardView
-import me.nomi.urdutyper.presentation.ui.dashboard.viewmodel.SharedViewModel
 import me.nomi.urdutyper.presentation.utils.common.ImageMaker.getListOfImages
 import me.nomi.urdutyper.presentation.utils.extensions.adapter.attach
 import me.nomi.urdutyper.presentation.utils.extensions.common.dialog
@@ -77,9 +79,6 @@ class LocalDashboardFragment : BaseFragment<FragmentLocalDashboardBinding>(), Da
         sharedViewModel.shouldRefresh.value = false
     }
 
-    override fun showMessageDialog(message: String) {
-        dialog(message).show()
-    }
 
     override fun goToViewPagerFragment() {
         findNavController().navigate(DashboardFragmentDirections.toLocalViewPagerFragment())

@@ -13,4 +13,6 @@ interface FirebaseRepository {
     suspend fun loadImages(): Result<List<Image>>
     suspend fun deleteImage(file: Image): Result<Unit>
     suspend fun uploadImage(file: File): Result<Unit>
+    suspend fun resetPassword(email: String): Result<Unit>
+    suspend fun signInWithGoogle(idToken: String): Result<User>
 }

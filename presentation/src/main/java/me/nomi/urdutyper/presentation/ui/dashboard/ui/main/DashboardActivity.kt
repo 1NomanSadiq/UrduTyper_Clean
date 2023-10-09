@@ -1,17 +1,15 @@
-package me.nomi.urdutyper.presentation.ui.dashboard.ui
+package me.nomi.urdutyper.presentation.ui.dashboard.ui.main
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.activity.viewModels
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import me.nomi.urdutyper.databinding.ActivityDashboardBinding
 import me.nomi.urdutyper.presentation.app.base.BaseActivity
-import me.nomi.urdutyper.presentation.ui.dashboard.viewmodel.SharedViewModel
+import me.nomi.urdutyper.presentation.sharedviewmodel.SharedViewModel
 import me.nomi.urdutyper.presentation.ui.type.state.TypeUiState
 import me.nomi.urdutyper.presentation.ui.type.viewmodel.TypeViewModel
 import me.nomi.urdutyper.presentation.utils.extensions.common.dialog
@@ -24,14 +22,17 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
     override fun inflateViewBinding(inflater: LayoutInflater): ActivityDashboardBinding =
         ActivityDashboardBinding.inflate(inflater)
 
-    private val navController by lazy {
-        binding.container.getFragment<Fragment>().findNavController()
-    }
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        launchAndRepeatWithViewLifecycle() { launch { viewModel.uiState.collectLatest { handleUiState(it) } } }
+        launchAndRepeatWithViewLifecycle() {
+            launch {
+                viewModel.uiState.collectLatest {
+                    handleUiState(
+                        it
+                    )
+                }
+            }
+        }
     }
 
     private fun handleUiState(state: TypeUiState) {

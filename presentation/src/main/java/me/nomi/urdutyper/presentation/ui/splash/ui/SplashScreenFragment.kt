@@ -10,6 +10,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import me.nomi.urdutyper.databinding.FragmentSplashScreenBinding
 import me.nomi.urdutyper.presentation.app.base.BaseFragment
+import me.nomi.urdutyper.presentation.ui.splash.state.SplashNavigationState
 import me.nomi.urdutyper.presentation.ui.splash.viewmodel.SplashScreenViewModel
 import me.nomi.urdutyper.presentation.ui.splash.state.SplashUiState
 import me.nomi.urdutyper.presentation.utils.extensions.common.dialog
@@ -46,9 +47,9 @@ class SplashScreenFragment : BaseFragment<FragmentSplashScreenBinding>() {
         }
     }
 
-    private fun handleNavigationState(state: SplashScreenViewModel.NavigationState) = when (state) {
-        is SplashScreenViewModel.NavigationState.LoggedIn -> navigateToDashboard()
-        is SplashScreenViewModel.NavigationState.NotLoggedIn -> navigateToMain()
+    private fun handleNavigationState(state: SplashNavigationState) = when (state) {
+        is SplashNavigationState.LoggedIn -> navigateToDashboard()
+        is SplashNavigationState.NotLoggedIn -> navigateToMain()
     }
 
     private fun navigateToDashboard() {

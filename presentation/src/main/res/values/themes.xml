@@ -15,8 +15,16 @@
         <item name="windowActionBar">false</item>
         <item name="android:windowBackground">@null</item>
         <item name="windowNoTitle">true</item>
+        <item name="fontFamily">@font/brandon_grotesque</item>
+        <item name="android:fontFamily">@font/brandon_grotesque</item>
 
         <!-- Customize your theme here. -->
+    </style>
+
+
+    <style name="roundedImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/_10sdp</item>
     </style>
 
     <style name="Theme.MaterialComponents.Transparent.NoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar">

@@ -31,7 +31,6 @@ import me.nomi.urdutyper.databinding.ColorPickDialogBinding
 import me.nomi.urdutyper.databinding.FontStyleDialogBinding
 import me.nomi.urdutyper.databinding.FragmentTypeBinding
 import me.nomi.urdutyper.presentation.app.base.BaseFragment
-import me.nomi.urdutyper.presentation.ui.dashboard.viewmodel.SharedViewModel
 import me.nomi.urdutyper.presentation.ui.type.viewmodel.TypeViewModel
 import me.nomi.urdutyper.presentation.utils.common.ImageMaker
 import me.nomi.urdutyper.presentation.utils.common.MultiTouchListener

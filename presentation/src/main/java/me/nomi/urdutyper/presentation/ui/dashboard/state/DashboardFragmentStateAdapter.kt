@@ -4,8 +4,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import me.nomi.urdutyper.presentation.ui.dashboard.ui.CloudDashboardFragment
-import me.nomi.urdutyper.presentation.ui.dashboard.ui.LocalDashboardFragment
+import me.nomi.urdutyper.presentation.ui.dashboard.ui.cloud.CloudDashboardFragment
+import me.nomi.urdutyper.presentation.ui.dashboard.ui.local.LocalDashboardFragment
 
 class DashboardFragmentStateAdapter(
     fragmentManager: FragmentManager,

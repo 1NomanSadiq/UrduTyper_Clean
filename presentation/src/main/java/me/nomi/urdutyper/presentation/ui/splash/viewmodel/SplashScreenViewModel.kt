@@ -3,15 +3,13 @@ package me.nomi.urdutyper.presentation.ui.splash.viewmodel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import me.nomi.urdutyper.domain.usecase.UserData
 import me.nomi.urdutyper.domain.utils.dispatchers.DispatchersProviders
 import me.nomi.urdutyper.domain.utils.onError
 import me.nomi.urdutyper.domain.utils.onSuccess
 import me.nomi.urdutyper.presentation.app.base.BaseViewModel
+import me.nomi.urdutyper.presentation.ui.splash.state.SplashNavigationState
 import me.nomi.urdutyper.presentation.ui.splash.state.SplashUiState
 import javax.inject.Inject
 
@@ -23,16 +21,10 @@ constructor(
     dispatchers: DispatchersProviders
 ) : BaseViewModel(dispatchers) {
 
-    sealed class NavigationState {
-        // Define your navigation states here if needed
-        data object LoggedIn : NavigationState()
-        data object NotLoggedIn : NavigationState()
-    }
+    private val _viewState = MutableSharedFlow<SplashUiState>()
+    val viewState = _viewState.asSharedFlow()
 
-    private val _viewState = MutableStateFlow<SplashUiState>(SplashUiState.Init)
-    val viewState = _viewState.asStateFlow()
-
-    private val _navigationState: MutableSharedFlow<NavigationState> = MutableSharedFlow()
+    private val _navigationState: MutableSharedFlow<SplashNavigationState> = MutableSharedFlow()
     val navigationState = _navigationState.asSharedFlow()
 
 
@@ -41,14 +33,13 @@ constructor(
     }
 
     private fun onInitialState() = launchOnMainImmediate {
+        _viewState.emit(SplashUiState.Loading)
         delay(2000)
         userData().onSuccess { result ->
-            _viewState.update {
-                SplashUiState.Success(result)
-            }
-            _navigationState.emit(NavigationState.LoggedIn)
+            _viewState.emit(SplashUiState.Success(result))
+            _navigationState.emit(SplashNavigationState.LoggedIn)
         }.onError {
-            _navigationState.emit(NavigationState.NotLoggedIn)
+            _navigationState.emit(SplashNavigationState.NotLoggedIn)
         }
     }
 }

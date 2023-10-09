@@ -2,12 +2,11 @@ package me.nomi.urdutyper.presentation.ui.onboarding.viewmodel
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import me.nomi.urdutyper.domain.usecase.LoginUseCase
+import me.nomi.urdutyper.domain.usecase.Login
+import me.nomi.urdutyper.domain.usecase.LoginWithGoogle
 import me.nomi.urdutyper.domain.usecase.Register
+import me.nomi.urdutyper.domain.usecase.ResetPassword
 import me.nomi.urdutyper.domain.utils.dispatchers.DispatchersProviders
 import me.nomi.urdutyper.domain.utils.onError
 import me.nomi.urdutyper.domain.utils.onSuccess
@@ -20,45 +19,69 @@ import javax.inject.Inject
 class AuthViewModel
 @Inject
 constructor(
-    private val login: LoginUseCase,
+    private val login: Login,
+    private val loginWithGoogle: LoginWithGoogle,
     private val register: Register,
+    private val resetPassword: ResetPassword,
     dispatchers: DispatchersProviders
 ) : BaseViewModel(dispatchers) {
 
-    private val _viewState = MutableStateFlow<OnboardingUiState>(OnboardingUiState.Init)
-    val viewState = _viewState.asStateFlow()
+    private val _viewState = MutableSharedFlow<OnboardingUiState>()
+    val viewState = _viewState.asSharedFlow()
 
     private val _navigationState: MutableSharedFlow<OnboardingNavigationState> = MutableSharedFlow()
     val navigationState = _navigationState.asSharedFlow()
 
-    suspend fun login(email: String, password: String) {
+    fun login(email: String, password: String) {
         launchOnMainImmediate {
-            _viewState.update {
-                OnboardingUiState.Loading
-            }
+            _viewState.emit(OnboardingUiState.Loading)
             login.invoke(email, password).onSuccess {
                 _navigationState.emit(OnboardingNavigationState.GoToDashboard(it))
             }.onError { error ->
-                _viewState.update {
-                    OnboardingUiState.Error(
-                        error.message ?: "Something went wrong"
-                    )
-                }
+                _viewState.emit(OnboardingUiState.Error(error.message ?: "Something went wrong"))
             }
         }
     }
 
-    suspend fun register(email: String, password: String) {
+    fun register(email: String, password: String) {
         launchOnMainImmediate {
+            _viewState.emit(OnboardingUiState.Loading)
             register.invoke(email, password).onSuccess {
-                _viewState.update { OnboardingUiState.Registered }
+                _viewState.emit(OnboardingUiState.Registered)
             }.onError { error ->
-                _viewState.update {
+                _viewState.emit(
                     OnboardingUiState.Error(
                         error.message ?: "Something went wrong"
                     )
-                }
+                )
             }
         }
+    }
+
+    fun resetPassword(email: String) {
+        launchOnMainImmediate {
+            _viewState.emit(OnboardingUiState.Loading)
+            resetPassword.invoke(email).onSuccess {
+                _viewState.emit(OnboardingUiState.Message("A password reset email has been sent to the email address. Please make sure that your new password is at least 10 of length"))
+            }.onError { error ->
+                _viewState.emit(OnboardingUiState.Error(error.message ?: "Something went wrong"))
+            }
+        }
+    }
+
+    fun firebaseAuthWithGoogle(idToken: String) {
+        launchOnMainImmediate {
+            _viewState.emit(OnboardingUiState.Loading)
+            loginWithGoogle.invoke(idToken).onSuccess {
+                _navigationState.emit(OnboardingNavigationState.GoToDashboard(it))
+            }.onError { error ->
+                _viewState.emit(OnboardingUiState.Error(error.message ?: "Something went wrong"))
+            }
+        }
+    }
+
+
+    fun signUpClicked() {
+        launchOnMainImmediate { _navigationState.emit(OnboardingNavigationState.GoToSignUp) }
     }
 }

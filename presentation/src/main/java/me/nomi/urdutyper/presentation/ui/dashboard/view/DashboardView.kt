@@ -4,6 +4,5 @@ import me.nomi.urdutyper.domain.entity.Image
 
 interface DashboardView {
     fun showImages(images: List<Image>)
-    fun showMessageDialog(message: String)
     fun goToViewPagerFragment()
 }

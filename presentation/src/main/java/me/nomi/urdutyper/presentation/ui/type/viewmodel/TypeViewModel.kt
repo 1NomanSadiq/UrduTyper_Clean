@@ -3,30 +3,26 @@ package me.nomi.urdutyper.presentation.ui.type.viewmodel
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
-import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import me.nomi.urdutyper.domain.entity.Image
+import kotlinx.coroutines.flow.asSharedFlow
 import me.nomi.urdutyper.domain.usecase.UploadImage
 import me.nomi.urdutyper.domain.utils.dispatchers.DispatchersProviders
 import me.nomi.urdutyper.domain.utils.onError
 import me.nomi.urdutyper.domain.utils.onSuccess
 import me.nomi.urdutyper.presentation.app.base.BaseViewModel
-import me.nomi.urdutyper.presentation.ui.dashboard.state.DashboardNavigationState
-import me.nomi.urdutyper.presentation.ui.dashboard.state.DashboardUiState
 import me.nomi.urdutyper.presentation.ui.type.state.TypeUiState
 import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class TypeViewModel  @Inject constructor(
+class TypeViewModel @Inject constructor(
     private val uploadImage: UploadImage,
     dispatchers: DispatchersProviders
-): BaseViewModel(dispatchers) {
-    private val _uiState = MutableStateFlow<TypeUiState>(TypeUiState.Init)
-    val uiState = _uiState.asStateFlow()
+) : BaseViewModel(dispatchers) {
+    private val _uiState = MutableSharedFlow<TypeUiState>()
+    val uiState = _uiState.asSharedFlow()
 
     val gradientOrientation: MutableStateFlow<GradientDrawable.Orientation> =
         MutableStateFlow(GradientDrawable.Orientation.TR_BL)
@@ -52,16 +48,12 @@ class TypeViewModel  @Inject constructor(
 
 
     fun uploadImage(file: File) = launchOnMainImmediate {
-        _uiState.update { TypeUiState.Loading }
+        _uiState.emit(TypeUiState.Loading)
         uploadImage.invoke(file)
             .onSuccess {
-                _uiState.update { TypeUiState.ImageUploaded }
+                _uiState.emit(TypeUiState.ImageUploaded)
             }.onError { error ->
-                _uiState.update {
-                    TypeUiState.Error(
-                        error.message ?: "Failed to Upload"
-                    )
-                }
+                _uiState.emit(TypeUiState.Error(error.message ?: "Failed to Upload"))
             }
     }
 }

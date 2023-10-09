@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import me.nomi.urdutyper.databinding.FragmentSignupBinding
@@ -28,8 +27,8 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>() {
 
 
         binding.signupButton.setOnClickListener {
-            val email = binding.signupEmail.text.toString()
-            val password = binding.signupPassword.text.toString()
+            val email = binding.emailText.text.toString()
+            val password = binding.passowrdText.text.toString()
 
             when {
                 email.isEmpty() || password.isEmpty() -> {
@@ -41,13 +40,11 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>() {
                 password.length < 10 -> {
                     dialog("Password must at least be 10 characters in length").show()
                 }
-                else -> {
-                    lifecycleScope.launch { viewModel.register(email, password) }
-                }
+                else -> viewModel.register(email, password)
             }
         }
 
-        binding.loginText.setOnClickListener {
+        binding.backToLogin.setOnClickListener {
             goBack()
         }
 
@@ -62,10 +59,10 @@ class SignupFragment : BaseFragment<FragmentSignupBinding>() {
     }
 
     private fun handleUiState(it: OnboardingUiState) {
-        binding.signupprogressBar.isVisible = it is OnboardingUiState.Loading
+        binding.progressBar.isVisible = it is OnboardingUiState.Loading
         binding.signupButton.isVisible = it !is OnboardingUiState.Loading
         when (it) {
-            is OnboardingUiState.Registered -> dialog("Account has been registered!\nPlease check your inbox, verify your email and proceed to login!") {
+            is OnboardingUiState.Registered -> dialog("Account has been registered! Please check your inbox, verify your email and proceed to login!") {
                 cancellable(false)
                 positiveButton {
                     dismiss()

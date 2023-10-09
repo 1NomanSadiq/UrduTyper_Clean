@@ -3,6 +3,7 @@ package me.nomi.urdutyper.data.repository
 
 import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
@@ -41,7 +42,6 @@ class FirebaseRepositoryImpl @Inject constructor(
         return safeApiCall {
             val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
             val user = result.user
-
             if (user != null) {
                 if (user.isEmailVerified) {
                     user.toDomain()
@@ -54,6 +54,17 @@ class FirebaseRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun signInWithGoogle(idToken: String): Result<User> {
+        return safeApiCall {
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
+            val result = firebaseAuth.signInWithCredential(credential).await()
+            val user = result.user
+            user?.toDomain() ?: throw Exception("User not found")
+        }
+    }
+
+
 
 
     override suspend fun logOut(): Result<Unit> {
@@ -72,7 +83,8 @@ class FirebaseRepositoryImpl @Inject constructor(
     override suspend fun loadImages(): Result<List<Image>> {
         return safeApiCall {
             val images = mutableListOf<Image>()
-            val reference = firebaseDatabase.reference.child(firebaseAuth.currentUser?.uid!!).child("Images")
+            val reference =
+                firebaseDatabase.reference.child(firebaseAuth.currentUser?.uid!!).child("Images")
             reference.keepSynced(true)
             val snapshot = reference.get().await()
             for (childSnapshot in snapshot.children) {
@@ -86,7 +98,8 @@ class FirebaseRepositoryImpl @Inject constructor(
 
     override suspend fun deleteImage(file: Image): Result<Unit> {
         return safeApiCall {
-            firebaseDatabase.reference.child(firebaseAuth.currentUser?.uid!!).child("Images").child(file.name).removeValue()
+            firebaseDatabase.reference.child(firebaseAuth.currentUser?.uid!!).child("Images")
+                .child(file.name).removeValue()
                 .await()
             firebaseStorage.getReferenceFromUrl(file.url).delete().await()
         }
@@ -103,6 +116,12 @@ class FirebaseRepositoryImpl @Inject constructor(
                     Date()
                 )
             ).setValue(uri.toString()).await()
+        }
+    }
+
+    override suspend fun resetPassword(email: String): Result<Unit> {
+        return safeApiCall {
+            firebaseAuth.sendPasswordResetEmail(email).await()
         }
     }
 }

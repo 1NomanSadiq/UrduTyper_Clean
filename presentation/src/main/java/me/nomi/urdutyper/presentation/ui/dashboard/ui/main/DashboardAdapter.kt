@@ -1,4 +1,4 @@
-package me.nomi.urdutyper.presentation.ui.dashboard.ui
+package me.nomi.urdutyper.presentation.ui.dashboard.ui.main
 
 import com.bumptech.glide.Glide
 import me.nomi.urdutyper.R

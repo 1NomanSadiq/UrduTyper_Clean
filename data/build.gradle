@@ -31,4 +31,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-database-ktx:20.2.2'
     implementation 'com.firebaseui:firebase-ui-database:8.0.0'
     implementation 'com.google.firebase:firebase-storage-ktx:20.2.1'
+    implementation 'com.google.code.gson:gson:2.10'
 }

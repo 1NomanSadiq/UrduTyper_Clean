@@ -1,19 +1,21 @@
-package me.nomi.urdutyper.presentation.ui.dashboard.ui
+package me.nomi.urdutyper.presentation.ui.dashboard.ui.local
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import me.nomi.urdutyper.R
 import me.nomi.urdutyper.databinding.FragmentViewpagerBinding
 import me.nomi.urdutyper.domain.entity.Image
 import me.nomi.urdutyper.presentation.app.base.BaseFragment
-import me.nomi.urdutyper.presentation.ui.dashboard.viewmodel.SharedViewModel
+import me.nomi.urdutyper.presentation.ui.dashboard.ui.main.FragmentViewPagerAdapter
+import me.nomi.urdutyper.presentation.sharedviewmodel.SharedViewModel
 import me.nomi.urdutyper.presentation.utils.common.ImageMaker.getListOfImages
-import me.nomi.urdutyper.presentation.utils.extensions.common.toast
 import me.nomi.urdutyper.presentation.utils.extensions.views.launchAndRepeatWithViewLifecycle
 
 @AndroidEntryPoint

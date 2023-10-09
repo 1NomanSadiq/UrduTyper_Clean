@@ -18,7 +18,7 @@
             android:layout_height="match_parent"
             android:background="@color/background"
             android:orientation="vertical"
-            tools:context=".presentation.ui.dashboard.ui.DashboardActivity">
+            tools:context=".presentation.ui.dashboard.ui.main.DashboardActivity">
 
             <RelativeLayout
                 android:layout_width="match_parent"
