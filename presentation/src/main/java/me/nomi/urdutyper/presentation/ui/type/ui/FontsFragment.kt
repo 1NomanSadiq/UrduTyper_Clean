@@ -21,6 +21,7 @@ import me.nomi.urdutyper.presentation.utils.common.Fonts.getAllFontsFromCache
 import me.nomi.urdutyper.presentation.utils.extensions.adapter.attach
 import me.nomi.urdutyper.presentation.utils.extensions.views.setVisible
 
+
 @AndroidEntryPoint
 class FontsFragment : BaseFragment<FragmentFontsBinding>() {
     private lateinit var filePickerResultLauncher: ActivityResultLauncher<Intent>
@@ -65,8 +66,7 @@ class FontsFragment : BaseFragment<FragmentFontsBinding>() {
                 if (result.resultCode == Activity.RESULT_OK) {
                     val uri = result.data?.data
                     if (uri != null) {
-                        val fontName = "${System.currentTimeMillis()}_cached_font.ttf"
-                        Fonts.copyFontToCache(requireActivity(), uri, fontName)
+                        Fonts.copyFontToCache(requireActivity(), uri)
                         val cacheFonts = getAllFontsFromCache(requireActivity())
                         adapter.pushData(
                             fonts.filterNotNull().plus(cacheFonts).toSet().toList()
@@ -79,7 +79,7 @@ class FontsFragment : BaseFragment<FragmentFontsBinding>() {
     private fun openFilePicker() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = "application/x-font-ttf"
+            type = "*/*"
         }
         filePickerResultLauncher.launch(intent)
     }

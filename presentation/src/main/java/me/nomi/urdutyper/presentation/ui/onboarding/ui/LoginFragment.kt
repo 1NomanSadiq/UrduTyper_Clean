@@ -104,10 +104,10 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         }
 
         binding.btnFingerprint.setOnClickListener {
-            if (prefs.tokenId.isEmpty()) {
-                if (prefs.email.isNotEmpty() && prefs.password.isNotEmpty())
+            if (prefs.email.isEmpty() || prefs.password.isEmpty()) {
+                if (prefs.tokenId.isNotEmpty()) {
                     biometricAuthenticator.authenticate()
-                else dialog("Please login at least once to use this method").show()
+                } else dialog("Please login at least once to use this method").show()
             } else biometricAuthenticator.authenticate()
         }
     }
@@ -117,7 +117,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
             val account = signInResult.signInAccount
             account?.let {
                 viewModel.firebaseAuthWithGoogle(it.idToken ?: "")
-                prefs.tokenId = it.idToken?: ""
+                prefs.tokenId = it.idToken ?: ""
             } ?: run {
                 dialog("Google Sign-In failed").show()
             }
@@ -147,7 +147,13 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         binding.forgotPasswordText.isVisible = it !is OnboardingUiState.Loading
         binding.btnFingerprint.isVisible = it !is OnboardingUiState.Loading
         when (it) {
-            is OnboardingUiState.Error -> dialog(it.message).show()
+            is OnboardingUiState.Error -> {
+                if (it.message.contains("malformed"))
+                    dialog("Your google session is expired, Please login using a different method!")
+                else
+                    dialog(it.message).show()
+            }
+
             is OnboardingUiState.Message -> dialog(it.message).show()
             else -> {}
         }
@@ -180,7 +186,8 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                 } else viewModel.firebaseAuthWithGoogle(prefs.tokenId)
             },
             onAuthenticationError = { errorCode, errString ->
-                dialog(errString.toString()).show()
+                if ((errorCode == 10 || errorCode == 13).not())
+                    dialog(errString.toString()).show()
             },
             onAuthenticationFailed = {
                 dialog("Authentication Failed").show()
